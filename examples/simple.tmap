@@ -1,0 +1,6 @@
+[Lines]
+"A line", #ff0000, a-001
+
+[Stops]
+"Kensal Rise", [0/0], a-001
+"Gospel Oak", [1/1], a-001
