@@ -1,38 +1,37 @@
 package engine
 
 import (
-	"fmt"
 	"math"
 
-	"github.com/lspaccatrosi16/go-libs/algorithms/graph"
 	"github.com/lspaccatrosi16/go-libs/structures/cartesian"
 	"github.com/lspaccatrosi16/tmappr/lib/types"
 )
 
-func ArrangePaths(config *types.AppConfig, lineMap map[string]*types.Line, stops []*types.Stop, ratios [2]float64) error {
+const Resolution = 2
+
+func RunEngine(config *types.AppConfig, lineMap *map[string]*types.Line, stopMap *map[string]*types.Stop, ratios [2]float64) error {
 	grid := cartesian.CoordinateGrid[int]{}
 	coordinates := []cartesian.Coordinate{}
+	cStopMap := map[cartesian.Coordinate]*types.Stop{}
 
-	for i, stop := range stops {
-		coord := approxCoordinate(stop.Coordinates[0]*ratios[0], stop.Coordinates[1]*ratios[1])
-		grid.Add(coord, i+1)
+	for _, s := range *stopMap {
+		coord := approxCoordinate(s.Coordinates[0], s.Coordinates[1])
+		grid.Add(coord, s.Id)
 		coordinates = append(coordinates, coord)
+		cStopMap[coord] = s
 	}
 
-	genGraph, graphGridMap := grid.CreateGraph(false, []int{}, true)
-
-	run, err := graph.RunDijkstra((*graphGridMap)[coordinates[0]], (*graphGridMap)[coordinates[1]], genGraph)
-	if err != nil {
-		return err
+	for _, line := range *lineMap {
+		err := GetLinePath(line, &grid, stopMap, &cStopMap)
+		if err != nil {
+			return err
+		}
 	}
-
-	repr := grid.GraphSearchRepresentation(run)
-	fmt.Println(repr)
 	return nil
 }
 
 func approxCoordinate(x, y float64) cartesian.Coordinate {
-	xR := math.Floor(x)
-	yR := math.Floor(y)
+	xR := math.Floor(x * Resolution)
+	yR := math.Floor(y * Resolution)
 	return cartesian.Coordinate{int(xR), int(yR)}
 }

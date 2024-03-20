@@ -20,21 +20,14 @@ func main() {
 	logger.SetVerbose(config.Verbose)
 	logger.Debug("Parsing Input File")
 
-	lines, stops, err := io.ParseFile(config)
+	lineMap, stopMap, err := io.ParseFile(config)
 	handle(err)
 
 	lineErrors := []string{}
 
 	var maxX, maxY float64
 
-	for _, s := range stops {
-		for _, l := range s.Lines {
-			_, ok := lines[l]
-			if !ok {
-				lineErrors = append(lineErrors, l)
-			}
-		}
-
+	for _, s := range *stopMap {
 		if s.Coordinates[0] > maxX {
 			maxX = s.Coordinates[0]
 		}
@@ -48,7 +41,7 @@ func main() {
 		handle(fmt.Errorf("could not find line(s) with code %s", strings.Join(lineErrors, ", ")))
 	}
 
-	err = engine.ArrangePaths(config, lines, stops, [2]float64{float64(config.XRes) / maxY, float64(config.YRes) / maxY})
+	err = engine.RunEngine(config, lineMap, stopMap, [2]float64{float64(config.XRes) / maxY, float64(config.YRes) / maxY})
 	handle(err)
 
 }

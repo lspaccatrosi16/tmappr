@@ -2,3 +2,5 @@ github.com/lspaccatrosi16/go-cli-tools v0.5.2 h1:541hI5k8Z04WJvHoKvSzI75ugh875Ew
 github.com/lspaccatrosi16/go-cli-tools v0.5.2/go.mod h1:aZSwLWdTQSF8aFQPkeZFutdR/9/ZeSR6n8cL2YJrcyo=
 github.com/lspaccatrosi16/go-libs v0.2.0 h1:TWhQgK0y6PYVCiRLVf6PF+wHJSleJRyHlkoOmv4ZlZY=
 github.com/lspaccatrosi16/go-libs v0.2.0/go.mod h1:lrZCTsA+8TBww9p1VkdwtgDs36wCoS4hW8Ybx2iCKEY=
+github.com/lspaccatrosi16/go-libs v0.2.1 h1:4GANN+Gqd54KeYH+TStwIjS4GVq4QsVx6oAzH3no67I=
+github.com/lspaccatrosi16/go-libs v0.2.1/go.mod h1:lrZCTsA+8TBww9p1VkdwtgDs36wCoS4hW8Ybx2iCKEY=

@@ -7,13 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/lspaccatrosi16/go-cli-tools/logging"
 	"github.com/lspaccatrosi16/tmappr/lib/types"
 )
 
-func ParseFile(config *types.AppConfig) (map[string]*types.Line, []*types.Stop, error) {
-	logger := logging.GetLogger()
-
+func ParseFile(config *types.AppConfig) (*map[string]*types.Line, *map[string]*types.Stop, error) {
 	var endStr string
 	if config.Ending == types.CRLF {
 		endStr = "\r\n"
@@ -33,74 +30,29 @@ func ParseFile(config *types.AppConfig) (map[string]*types.Line, []*types.Stop, 
 	io.Copy(buf, f)
 
 	iptLines := strings.Split(buf.String(), endStr)
-	if expectLine(iptLines[0], "[Lines]") != nil {
+	counter := 0
+
+	lineMap, err := doOverview(&counter, &iptLines)
+	if err != nil {
 		return nil, nil, err
 	}
 
-	counter := 1
-
-	lines := []*types.Line{}
-	stops := []*types.Stop{}
-
-	logger.Debug("Parsing Lines")
-
-	for {
-		if counter >= len(iptLines) {
-			return nil, nil, fmt.Errorf("unexpected EOF")
-		}
-
-		if iptLines[counter] == "" {
-			counter++
-			continue
-		}
-
-		if expectLine(iptLines[counter], "[Stops]") == nil {
-			counter++
-			break
-		}
-
-		parsed, err := types.ParseLine(iptLines[counter])
-		if err != nil {
-			return nil, nil, err
-		}
-
-		lines = append(lines, parsed)
-		counter++
+	stopMap, err := doStops(&counter, &iptLines)
+	if err != nil {
+		return nil, nil, err
 	}
 
-	logger.Debug("Parsing Stops")
-
-	for {
-		if counter >= len(iptLines) {
-			break
-		}
-
-		if iptLines[counter] == "" {
-			counter++
-			continue
-		}
-
-		parsed, err := types.ParseStop(iptLines[counter])
-		if err != nil {
-			return nil, nil, err
-		}
-
-		stops = append(stops, parsed)
-		counter++
+	err = doLines(&counter, &iptLines, lineMap, stopMap)
+	if err != nil {
+		return nil, nil, err
 	}
 
-	lineMap := map[string]*types.Line{}
-
-	for _, l := range lines {
-		lineMap[l.Code] = l
-	}
-
-	return lineMap, stops, nil
+	return lineMap, stopMap, nil
 }
 
 func expectLine(line, str string) error {
 	if strings.HasPrefix(line, str) {
 		return nil
 	}
-	return fmt.Errorf("expected %s", str)
+	return fmt.Errorf("expected\n%s\nbut got\n%s", str, line)
 }

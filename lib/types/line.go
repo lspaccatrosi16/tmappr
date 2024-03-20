@@ -3,26 +3,25 @@ package types
 import (
 	"fmt"
 	"strings"
+
+	"github.com/lspaccatrosi16/tmappr/lib/util"
 )
 
 type Line struct {
 	Name   string
 	Code   string
 	Colour string
-}
-
-func trim(s string) string {
-	return strings.Trim(s, " \t\r\n")
+	Stops  []string
 }
 
 func ParseLine(raw string) (*Line, error) {
-	components := strings.Split(trim(raw), ",")
+	components := strings.Split(util.Trim(raw), ",")
 	if len(components) != 3 {
 		return nil, fmt.Errorf("expected entry to have 3 components, not %d", len(components))
 	}
 
 	for i := 0; i < len(components); i++ {
-		components[i] = trim(components[i])
+		components[i] = util.Trim(components[i])
 	}
 
 	if !strings.HasPrefix(components[0], "\"") || !strings.HasSuffix(components[0], "\"") {
@@ -33,7 +32,7 @@ func ParseLine(raw string) (*Line, error) {
 		return nil, fmt.Errorf("colour be a hex formatted value starting with #")
 	}
 
-	if len(trim(components[1])) != 7 {
+	if len(util.Trim(components[1])) != 7 {
 		return nil, fmt.Errorf("colour be a hex formatted value starting with #")
 	}
 
