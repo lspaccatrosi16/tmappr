@@ -86,6 +86,8 @@ type AppConfig struct {
 	Linewidth int
 	Ending    LineEnding
 	Verbose   bool
+	XRes      int
+	YRes      int
 }
 
 func GetFormat(i string) Format {

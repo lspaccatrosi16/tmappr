@@ -11,7 +11,7 @@ import (
 	"github.com/lspaccatrosi16/tmappr/lib/types"
 )
 
-func ParseFile(config *types.AppConfig) ([]*types.Line, []*types.Stop, error) {
+func ParseFile(config *types.AppConfig) (map[string]*types.Line, []*types.Stop, error) {
 	logger := logging.GetLogger()
 
 	var endStr string
@@ -89,7 +89,13 @@ func ParseFile(config *types.AppConfig) ([]*types.Line, []*types.Stop, error) {
 		counter++
 	}
 
-	return lines, stops, nil
+	lineMap := map[string]*types.Line{}
+
+	for _, l := range lines {
+		lineMap[l.Code] = l
+	}
+
+	return lineMap, stops, nil
 }
 
 func expectLine(line, str string) error {

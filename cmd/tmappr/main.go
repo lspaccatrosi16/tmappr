@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/lspaccatrosi16/go-cli-tools/logging"
+	"github.com/lspaccatrosi16/tmappr/lib/engine"
 	"github.com/lspaccatrosi16/tmappr/lib/flags"
 	"github.com/lspaccatrosi16/tmappr/lib/io"
 )
@@ -21,8 +23,34 @@ func main() {
 	lines, stops, err := io.ParseFile(config)
 	handle(err)
 
-	fmt.Println(lines)
-	fmt.Println(stops)
+	lineErrors := []string{}
+
+	var maxX, maxY float64
+
+	for _, s := range stops {
+		for _, l := range s.Lines {
+			_, ok := lines[l]
+			if !ok {
+				lineErrors = append(lineErrors, l)
+			}
+		}
+
+		if s.Coordinates[0] > maxX {
+			maxX = s.Coordinates[0]
+		}
+
+		if s.Coordinates[1] > maxY {
+			maxY = s.Coordinates[1]
+		}
+	}
+
+	if len(lineErrors) > 0 {
+		handle(fmt.Errorf("could not find line(s) with code %s", strings.Join(lineErrors, ", ")))
+	}
+
+	err = engine.ArrangePaths(config, lines, stops, [2]float64{float64(config.XRes) / maxY, float64(config.YRes) / maxY})
+	handle(err)
+
 }
 
 func handle(e error) {
