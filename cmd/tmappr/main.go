@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/lspaccatrosi16/go-cli-tools/logging"
+	"github.com/lspaccatrosi16/tmappr/lib/drawer"
 	"github.com/lspaccatrosi16/tmappr/lib/engine"
 	"github.com/lspaccatrosi16/tmappr/lib/flags"
 	"github.com/lspaccatrosi16/tmappr/lib/io"
@@ -23,25 +23,12 @@ func main() {
 	lineMap, stopMap, err := io.ParseFile(config)
 	handle(err)
 
-	lineErrors := []string{}
+	pathings, maxX, maxY, err := engine.RunEngine(config, lineMap, stopMap)
+	handle(err)
 
-	var maxX, maxY float64
+	drawn := drawer.DrawMap(config, pathings, maxX, maxY)
 
-	for _, s := range *stopMap {
-		if s.Coordinates[0] > maxX {
-			maxX = s.Coordinates[0]
-		}
-
-		if s.Coordinates[1] > maxY {
-			maxY = s.Coordinates[1]
-		}
-	}
-
-	if len(lineErrors) > 0 {
-		handle(fmt.Errorf("could not find line(s) with code %s", strings.Join(lineErrors, ", ")))
-	}
-
-	err = engine.RunEngine(config, lineMap, stopMap, [2]float64{float64(config.XRes) / maxY, float64(config.YRes) / maxY})
+	err = io.OutputFile(config, drawn)
 	handle(err)
 
 }

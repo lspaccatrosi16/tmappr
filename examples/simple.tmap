@@ -1,6 +1,6 @@
 [Lines]
 "A line", #ff0000, a-001
-"B line", #ff00ff, a-002
+"B line", #0000ff, a-002
 
 [Stops]
 "Kensal Rise", [0/0]

@@ -1,15 +1,22 @@
 package engine
 
 import (
+	"fmt"
 	"math"
 
+	"github.com/lspaccatrosi16/go-cli-tools/logging"
 	"github.com/lspaccatrosi16/go-libs/structures/cartesian"
 	"github.com/lspaccatrosi16/tmappr/lib/types"
+	"github.com/lspaccatrosi16/tmappr/lib/util"
 )
 
 const Resolution = 2
 
-func RunEngine(config *types.AppConfig, lineMap *map[string]*types.Line, stopMap *map[string]*types.Stop, ratios [2]float64) error {
+func RunEngine(config *types.AppConfig, lineMap *map[string]*types.Line, stopMap *map[string]*types.Stop) ([]*types.PathedLine, int, int, error) {
+	logger := logging.GetLogger()
+
+	util.DebugSection("Running Pathing Engine")
+
 	grid := cartesian.CoordinateGrid[int]{}
 	coordinates := []cartesian.Coordinate{}
 	cStopMap := map[cartesian.Coordinate]*types.Stop{}
@@ -21,13 +28,26 @@ func RunEngine(config *types.AppConfig, lineMap *map[string]*types.Line, stopMap
 		cStopMap[coord] = s
 	}
 
-	for _, line := range *lineMap {
-		err := GetLinePath(line, &grid, stopMap, &cStopMap)
+	maxX, maxY := grid.MaxBounds()
+
+	pathMap := map[string]*types.PathedLine{}
+	pathings := []*types.PathedLine{}
+
+	for name, line := range *lineMap {
+		logger.Debug(fmt.Sprintf("Pathfind %s", name))
+
+		path, err := GetLinePath(line, &grid, stopMap, &cStopMap)
 		if err != nil {
-			return err
+			return nil, 0, 0, err
 		}
+
+		logger.Debug(path.String())
+
+		pathMap[name] = path
+		pathings = append(pathings, path)
+
 	}
-	return nil
+	return pathings, maxX, maxY, nil
 }
 
 func approxCoordinate(x, y float64) cartesian.Coordinate {

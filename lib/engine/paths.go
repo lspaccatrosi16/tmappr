@@ -12,10 +12,10 @@ import (
 
 type pathLeg [2]cartesian.Coordinate
 
-func GetLinePath(line *types.Line, grid *cartesian.CoordinateGrid[int], stopMap *map[string]*types.Stop, cStopMap *map[cartesian.Coordinate]*types.Stop) error {
-	logger := logging.GetLogger()
-
+func GetLinePath(line *types.Line, grid *cartesian.CoordinateGrid[int], stopMap *map[string]*types.Stop, cStopMap *map[cartesian.Coordinate]*types.Stop) (*types.PathedLine, error) {
 	util.DebugSection(fmt.Sprintf("Pathfind Line %s", line.Code))
+
+	logger := logging.GetLogger()
 
 	legs := []pathLeg{}
 	coordinates := []cartesian.Coordinate{}
@@ -38,7 +38,7 @@ func GetLinePath(line *types.Line, grid *cartesian.CoordinateGrid[int], stopMap 
 	for _, leg := range legs {
 		run, err := graph.RunDijkstra((*graphGridMap)[leg[0]], (*graphGridMap)[leg[1]], genGraph)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		gpl := new(cartesian.GridPointList).FromGraphNodes(run.DijkstraData.Path)
@@ -57,6 +57,8 @@ func GetLinePath(line *types.Line, grid *cartesian.CoordinateGrid[int], stopMap 
 		}
 	}
 
+	parsedPath := []cartesian.Coordinate{}
+
 	for i, p := range path {
 		if i+1 < len(path) && p == path[i+1] {
 			continue
@@ -67,9 +69,21 @@ func GetLinePath(line *types.Line, grid *cartesian.CoordinateGrid[int], stopMap 
 		} else {
 			repreGrid.Add(p, "#")
 		}
+
+		parsedPath = append(parsedPath, p)
 	}
 
 	logger.Debug(repreGrid.String())
 
-	return nil
+	pathing := types.PathedLine{
+		Line: line,
+	}
+
+	err := pathing.CreateSegments(parsedPath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pathing, nil
 }
