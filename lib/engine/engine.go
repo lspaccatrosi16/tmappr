@@ -12,7 +12,7 @@ import (
 
 const Resolution = 2
 
-func RunEngine(config *types.AppConfig, lineMap *map[string]*types.Line, stopMap *map[string]*types.Stop) ([]*types.PathedLine, int, int, error) {
+func RunEngine(config *types.AppConfig, lineMap *map[string]*types.Line, stopMap *map[string]*types.Stop) (*map[string]*types.PathedLine, map[cartesian.Coordinate]*types.Stop, int, int, error) {
 	logger := logging.GetLogger()
 
 	util.DebugSection("Running Pathing Engine")
@@ -31,23 +31,21 @@ func RunEngine(config *types.AppConfig, lineMap *map[string]*types.Line, stopMap
 	maxX, maxY := grid.MaxBounds()
 
 	pathMap := map[string]*types.PathedLine{}
-	pathings := []*types.PathedLine{}
 
 	for name, line := range *lineMap {
 		logger.Debug(fmt.Sprintf("Pathfind %s", name))
 
 		path, err := GetLinePath(line, &grid, stopMap, &cStopMap)
 		if err != nil {
-			return nil, 0, 0, err
+			return nil, nil, 0, 0, err
 		}
 
 		logger.Debug(path.String())
 
 		pathMap[name] = path
-		pathings = append(pathings, path)
 
 	}
-	return pathings, maxX, maxY, nil
+	return &pathMap, cStopMap, maxX, maxY, nil
 }
 
 func approxCoordinate(x, y float64) cartesian.Coordinate {

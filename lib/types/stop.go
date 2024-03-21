@@ -12,6 +12,7 @@ type Stop struct {
 	Name        string
 	Coordinates [2]float64
 	Id          int
+	Lines       []string
 }
 
 func ParseStop(raw string) (*Stop, error) {

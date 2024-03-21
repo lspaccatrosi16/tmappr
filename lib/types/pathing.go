@@ -6,6 +6,16 @@ import (
 	"github.com/lspaccatrosi16/go-libs/structures/cartesian"
 )
 
+type CompoundSegment struct {
+	Start cartesian.Coordinate
+	End   cartesian.Coordinate
+	Lines []*Line
+}
+
+type PathedSystem struct {
+	Segments []CompoundSegment
+}
+
 type LineSegment struct {
 	Start cartesian.Coordinate
 	End   cartesian.Coordinate

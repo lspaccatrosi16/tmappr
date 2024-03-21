@@ -49,11 +49,13 @@ func doLines(counter *int, iptLines *[]string, lineMap *map[string]*types.Line, 
 
 			stopName := stop[1 : len(stop)-1]
 
-			_, ok := (*stopMap)[stopName]
+			s, ok := (*stopMap)[stopName]
 
 			if !ok {
 				return fmt.Errorf("unknown stop, \"%s\"", stopName)
 			}
+
+			s.Lines = append(s.Lines, lineCode)
 
 			lineStops = append(lineStops, stopName)
 		}
