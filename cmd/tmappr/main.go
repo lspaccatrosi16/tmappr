@@ -23,10 +23,10 @@ func main() {
 	lineMap, stopMap, err := io.ParseFile(config)
 	handle(err)
 
-	pathings, cStopMap, maxX, maxY, err := engine.RunEngine(config, lineMap, stopMap)
+	pathings, cStopMap, combinedGrid, maxX, maxY, err := engine.RunEngine(config, lineMap, stopMap)
 	handle(err)
 
-	drawn := drawer.DrawMap(config, pathings, &cStopMap, maxX, maxY)
+	drawn := drawer.DrawMap(config, pathings, &cStopMap, lineMap, combinedGrid, maxX, maxY)
 
 	err = io.OutputFile(config, drawn)
 	handle(err)

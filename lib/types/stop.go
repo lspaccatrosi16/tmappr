@@ -55,6 +55,6 @@ func ParseStop(raw string) (*Stop, error) {
 
 	return &Stop{
 		Name:        components[0][1 : len(components[0])-1],
-		Coordinates: coordinates,
+		Coordinates: [2]float64{coordinates[0] + 1, coordinates[1] + 1},
 	}, nil
 }

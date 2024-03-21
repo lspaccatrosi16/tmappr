@@ -12,7 +12,7 @@ import (
 
 const borderOffset = 100
 
-func DrawMap(config *types.AppConfig, pathings *map[string]*types.PathedLine, cStopMap *map[cartesian.Coordinate]*types.Stop, maxX, maxY int) *bytes.Buffer {
+func DrawMap(config *types.AppConfig, pathings *types.PathedSystem, cStopMap *map[cartesian.Coordinate]*types.Stop, lineMap *map[string]*types.Line, combinedGrid *cartesian.CoordinateGrid[bool], maxX, maxY int) *bytes.Buffer {
 	buf := bytes.NewBuffer(nil)
 	canvas := svg.New(buf)
 
@@ -28,15 +28,20 @@ func DrawMap(config *types.AppConfig, pathings *map[string]*types.PathedLine, cS
 
 	canvas.Start(config.XRes+borderOffset, config.YRes+borderOffset)
 
-	for _, path := range *pathings {
-		lineStyle := fmt.Sprintf("stroke: %s; stroke-width: %dpx", path.Line.Colour, config.Linewidth)
-		circleStyle := fmt.Sprintf("fill: %s", path.Line.Colour)
-		for _, segment := range path.Segments {
-			xCoords := []int{xc(segment.Start[0]), xc(segment.End[0])}
-			yCoords := []int{yc(segment.Start[1]), yc(segment.End[1])}
+	for _, segment := range pathings.Segments {
+		offset := func(n int) int {
+			return config.Linewidth*n - (len(segment.Lines)-1)*halfWidth
+		}
 
+		for i, line := range segment.Lines {
+			o := offset(i)
+			lineStyle := fmt.Sprintf("stroke: %s; stroke-width: %dpx", line.Colour, config.Linewidth)
+			circleStyle := fmt.Sprintf("fill: %s", line.Colour)
+
+			xCoords := []int{xc(segment.Start[0]) + o, xc(segment.End[0]) + o}
+			yCoords := []int{yc(segment.Start[1]) + o, yc(segment.End[1]) + o}
 			canvas.Polyline(xCoords, yCoords, lineStyle)
-			canvas.Circle(xc(segment.End[0]), yc(segment.End[1]), halfWidth, circleStyle)
+			canvas.Circle(xc(segment.End[0])+o, yc(segment.End[1])+o, halfWidth, circleStyle)
 		}
 	}
 	for c, stop := range *cStopMap {
@@ -45,9 +50,32 @@ func DrawMap(config *types.AppConfig, pathings *map[string]*types.PathedLine, cS
 			styleText = fmt.Sprintf("fill: #ffffff; stroke: #000000; stroke-width: %dpx", halfWidth)
 			canvas.Circle(xc(c[0]), yc(c[1]), stopRadius, styleText)
 		} else if len(stop.Lines) == 1 {
-			pathing := (*pathings)[stop.Lines[0]]
-			styleText = fmt.Sprintf("fill: #ffffff; stroke-width: %dpx; stroke: %s;", stopRadius, pathing.Line.Colour)
+			line := (*lineMap)[stop.Lines[0]]
+			styleText = fmt.Sprintf("fill: #ffffff; stroke-width: %dpx; stroke: %s;", stopRadius, line.Colour)
 			canvas.Circle(xc(c[0]), yc(c[1]), quarterWidth, styleText)
+		}
+
+		combos := []cartesian.Coordinate{
+			{1, 0},
+			{1, 1},
+			{1, -1},
+			{0, 1},
+			{0, -1},
+			{-1, 0},
+			{-1, 1},
+			{-1, -1},
+		}
+
+		for _, ca := range combos {
+			if !combinedGrid.Get(ca) {
+				newCoordinate := c.Add(ca)
+				combinedGrid.Add(newCoordinate, true)
+
+				textStyleText := fmt.Sprintf("font-size: %dpx", 2*config.Linewidth)
+
+				canvas.Text(xc(newCoordinate[0]), yc(newCoordinate[0]), stop.Name, textStyleText)
+				break
+			}
 		}
 	}
 

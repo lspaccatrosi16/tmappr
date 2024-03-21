@@ -7,18 +7,107 @@ import (
 )
 
 type CompoundSegment struct {
-	Start cartesian.Coordinate
-	End   cartesian.Coordinate
 	Lines []*Line
+	LineSegment
+}
+
+func (c *CompoundSegment) Subsegment(start, end cartesian.Coordinate, newLine *Line) []*CompoundSegment {
+	newSegments := []*CompoundSegment{}
+
+	if c.Start != start {
+		newEnd := c.Start
+		for {
+			newEnd = newEnd.Transform(c.Gradient[0], c.Gradient[1])
+			if newEnd == start || newEnd == end || newEnd == c.End {
+				break
+			}
+		}
+		newSegments = append(newSegments, &CompoundSegment{
+			Lines: c.Lines,
+			LineSegment: LineSegment{
+				Start:    c.Start,
+				End:      newEnd,
+				Gradient: c.Gradient,
+			},
+		})
+	}
+
+	newSegments = append(newSegments, &CompoundSegment{
+		Lines: append(c.Lines, newLine),
+		LineSegment: LineSegment{
+			Start:    start,
+			End:      end,
+			Gradient: c.Gradient,
+		},
+	})
+
+	if c.End != end {
+		newStart := c.End
+		for {
+			newStart = newStart.Transform(-c.Gradient[0], -c.Gradient[1])
+			if newStart == start || newStart == end || newStart == c.Start {
+				break
+			}
+		}
+		newSegments = append(newSegments, &CompoundSegment{
+			Lines: c.Lines,
+			LineSegment: LineSegment{
+				Start:    newStart,
+				End:      c.End,
+				Gradient: c.Gradient,
+			},
+		})
+	}
+
+	return newSegments
 }
 
 type PathedSystem struct {
-	Segments []CompoundSegment
+	Segments []*CompoundSegment
+}
+
+func (p *PathedSystem) FindCSegment(seg LineSegment) *CompoundSegment {
+	for _, segment := range p.Segments {
+		if segment.PointInLine(seg.Start) && segment.Gradient == seg.Gradient {
+			return segment
+		}
+	}
+	return nil
+
+}
+
+func (p *PathedSystem) AddSegment(c ...*CompoundSegment) {
+	p.Segments = append(p.Segments, c...)
 }
 
 type LineSegment struct {
-	Start cartesian.Coordinate
-	End   cartesian.Coordinate
+	Start    cartesian.Coordinate
+	End      cartesian.Coordinate
+	Gradient [2]int
+}
+
+func (l *LineSegment) PointInLine(c cartesian.Coordinate) bool {
+	points := l.Points()
+	for _, p := range points {
+		if p == c {
+			return true
+		}
+	}
+	return false
+}
+
+func (l *LineSegment) Points() []cartesian.Coordinate {
+	points := []cartesian.Coordinate{}
+	cp := l.Start
+	for {
+		points = append(points, cp)
+		cp = cp.Transform(l.Gradient[0], l.Gradient[1])
+		if cp == l.End {
+			break
+		}
+	}
+	points = append(points, l.End)
+	return points
 }
 
 func (l *LineSegment) String() string {
@@ -51,8 +140,9 @@ func (p *PathedLine) CreateSegments(path []cartesian.Coordinate) error {
 		newDirection := [2]int{path[i][0] - prev[0], path[i][1] - prev[1]}
 		if !cmp_direction(curDirection, newDirection) {
 			segment := LineSegment{
-				Start: segmentStart,
-				End:   prev,
+				Start:    segmentStart,
+				End:      prev,
+				Gradient: curDirection,
 			}
 			p.Segments = append(p.Segments, segment)
 			curDirection = newDirection
@@ -62,8 +152,9 @@ func (p *PathedLine) CreateSegments(path []cartesian.Coordinate) error {
 	}
 
 	finalSegment := LineSegment{
-		Start: segmentStart,
-		End:   prev,
+		Start:    segmentStart,
+		End:      prev,
+		Gradient: curDirection,
 	}
 
 	p.Segments = append(p.Segments, finalSegment)
