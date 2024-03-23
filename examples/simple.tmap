@@ -1,16 +1,22 @@
 [Lines]
 "A line", #ff0000, a-001
 "B line", #0000ff, a-002
+"C line", #b31980, a-003
 
 [Stops]
 "Kensal Rise", [0/0]
-"Gospel Oak", [1/1]
-"Hampstead Heath", [1/3]
+"Gospel Oak", [1/1], Auto, South
+"Hampstead Heath", [3/3]
 "Richmond", [4/4]
 "Stratford", [4/0]
+"Litchfield Trent Valley", [4/2], Normal
+"Hadley Wood", [0/2]
 
 [a-001]
 "Kensal Rise", "Gospel Oak", "Hampstead Heath", "Richmond", "Stratford"
 
 [a-002]
-"Richmond", "Stratford", "Kensal Rise"
+"Richmond", "Litchfield Trent Valley", "Stratford", "Kensal Rise"
+
+[a-003]
+"Hadley Wood", "Gospel Oak", "Stratford",  "Litchfield Trent Valley", "Richmond"

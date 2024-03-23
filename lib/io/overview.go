@@ -9,11 +9,11 @@ import (
 	"github.com/lspaccatrosi16/tmappr/lib/util"
 )
 
-func doOverview(counter *int, iptLines *[]string) (*map[string]*types.Line, error) {
+func doOverview(counter *int, iptLines *[]string) (*map[string]*types.Line, []*types.Line, error) {
 	logger := logging.GetLogger()
 
 	if err := expectLine((*iptLines)[*counter], "[Lines]"); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	(*counter)++
@@ -38,7 +38,7 @@ func doOverview(counter *int, iptLines *[]string) (*map[string]*types.Line, erro
 
 		parsed, err := types.ParseLine((*iptLines)[*counter])
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		logger.Debug(fmt.Sprintf("Parsed Line Overview %s", parsed.Code))
@@ -53,5 +53,5 @@ func doOverview(counter *int, iptLines *[]string) (*map[string]*types.Line, erro
 		lineMap[l.Code] = l
 	}
 
-	return &lineMap, nil
+	return &lineMap, lines, nil
 }

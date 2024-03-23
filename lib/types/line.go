@@ -11,7 +11,7 @@ type Line struct {
 	Name   string
 	Code   string
 	Colour string
-	Stops  []string
+	Stops  []*Stop
 }
 
 func ParseLine(raw string) (*Line, error) {
@@ -37,7 +37,7 @@ func ParseLine(raw string) (*Line, error) {
 	}
 
 	return &Line{
-		Name:   components[0][1 : len(components)-1],
+		Name:   components[0][1 : len(components[0])-1],
 		Colour: components[1],
 		Code:   components[2],
 	}, nil

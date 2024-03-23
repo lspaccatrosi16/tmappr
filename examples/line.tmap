@@ -1,0 +1,17 @@
+[Lines]
+"Northern Line", #000000, n
+
+[Stops]
+"Edgware", [0/0]
+"Burnt Oak", [1/0]
+"Colindale", [2/0]
+"Hendon Central", [3/0]
+"Brent Cross", [4/0]
+"Golders Green", [5/0]
+"Hampstead", [6/0]
+"Belsize Park", [7/0]
+"Chalk Farm", [8/0]
+"Camden Town", [9/0]
+
+[n]
+"Edgware", "Burnt Oak", "Colindale", "Hendon Central", "Brent Cross", "Golders Green", "Hampstead", "Belsize Park", "Chalk Farm", "Camden Town"

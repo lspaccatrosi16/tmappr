@@ -39,9 +39,9 @@ func doLines(counter *int, iptLines *[]string, lineMap *map[string]*types.Line, 
 		stopsLine := (*iptLines)[*counter]
 		stops := strings.Split(stopsLine, ",")
 
-		lineStops := []string{}
+		lineStops := []*types.Stop{}
 
-		for _, s := range stops {
+		for i, s := range stops {
 			stop := util.Trim(s)
 			if !strings.HasPrefix(stop, "\"") || !strings.HasSuffix(stop, "\"") {
 				return fmt.Errorf("entry name must be double quoted (%s)", s)
@@ -57,7 +57,11 @@ func doLines(counter *int, iptLines *[]string, lineMap *map[string]*types.Line, 
 
 			s.Lines = append(s.Lines, lineCode)
 
-			lineStops = append(lineStops, stopName)
+			if i == 0 || i == len(stops)-1 {
+				s.Type = types.Interchange
+			}
+
+			lineStops = append(lineStops, s)
 		}
 
 		lEntry := (*lineMap)[lineCode]

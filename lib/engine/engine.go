@@ -10,18 +10,20 @@ import (
 	"github.com/lspaccatrosi16/tmappr/lib/util"
 )
 
-const Resolution = 2
+const BorderCoordOffet = 1
 
-func RunEngine(config *types.AppConfig, lineMap *map[string]*types.Line, stopMap *map[string]*types.Stop) (*types.PathedSystem, map[cartesian.Coordinate]*types.Stop, *cartesian.CoordinateGrid[bool], int, int, error) {
+func RunEngine(config *types.AppConfig, data *types.AppData) error {
 	logger := logging.GetLogger()
 
 	util.DebugSection("Running Pathing Engine")
+
+	approxCoordinate := approxCoordinateMake(float64(config.Simres))
 
 	grid := cartesian.CoordinateGrid[int]{}
 	coordinates := []cartesian.Coordinate{}
 	cStopMap := map[cartesian.Coordinate]*types.Stop{}
 
-	for _, s := range *stopMap {
+	for _, s := range data.Stops {
 		coord := approxCoordinate(s.Coordinates[0], s.Coordinates[1])
 		grid.Add(coord, s.Id)
 		coordinates = append(coordinates, coord)
@@ -32,12 +34,12 @@ func RunEngine(config *types.AppConfig, lineMap *map[string]*types.Line, stopMap
 
 	pathings := []*types.PathedLine{}
 
-	for name, line := range *lineMap {
+	for name, line := range data.LinesNames {
 		logger.Debug(fmt.Sprintf("Pathfind %s", name))
 
-		path, err := GetLinePath(line, &grid, stopMap, &cStopMap)
+		path, err := GetLinePath(config, line, &grid, &cStopMap)
 		if err != nil {
-			return nil, nil, nil, 0, 0, err
+			return err
 		}
 
 		logger.Debug(path.String())
@@ -48,11 +50,20 @@ func RunEngine(config *types.AppConfig, lineMap *map[string]*types.Line, stopMap
 
 	combined, combinedGrid := CombineSegments(pathings, maxX+1, maxY+1)
 
-	return combined, cStopMap, combinedGrid, maxX + 1, maxY + 1, nil
+	data.Pathings = combined
+	data.UsedGrid = combinedGrid
+	data.CStopMap = cStopMap
+	data.MaxX = maxX + BorderCoordOffet
+	data.MaxY = maxY + BorderCoordOffet
+
+	return nil
 }
 
-func approxCoordinate(x, y float64) cartesian.Coordinate {
-	xR := math.Floor(x * Resolution)
-	yR := math.Floor(y * Resolution)
-	return cartesian.Coordinate{int(xR), int(yR)}
+func approxCoordinateMake(res float64) func(x, y float64) cartesian.Coordinate {
+	return func(x, y float64) cartesian.Coordinate {
+		xR := math.Floor(x*res) + BorderCoordOffet
+		yR := math.Floor(y*res) + BorderCoordOffet
+		return cartesian.Coordinate{int(xR), int(yR)}
+
+	}
 }

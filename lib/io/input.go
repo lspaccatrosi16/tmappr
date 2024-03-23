@@ -10,7 +10,7 @@ import (
 	"github.com/lspaccatrosi16/tmappr/lib/types"
 )
 
-func ParseFile(config *types.AppConfig) (*map[string]*types.Line, *map[string]*types.Stop, error) {
+func ParseFile(config *types.AppConfig, data *types.AppData) error {
 	var endStr string
 	if config.Ending == types.CRLF {
 		endStr = "\r\n"
@@ -21,7 +21,7 @@ func ParseFile(config *types.AppConfig) (*map[string]*types.Line, *map[string]*t
 	f, err := os.Open(config.Input)
 
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 
 	defer f.Close()
@@ -32,22 +32,39 @@ func ParseFile(config *types.AppConfig) (*map[string]*types.Line, *map[string]*t
 	iptLines := strings.Split(buf.String(), endStr)
 	counter := 0
 
-	lineMap, err := doOverview(&counter, &iptLines)
+	lineMap, lines, err := doOverview(&counter, &iptLines)
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 
-	stopMap, err := doStops(&counter, &iptLines)
+	stopMap, stops, err := doStops(&counter, &iptLines)
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 
 	err = doLines(&counter, &iptLines, lineMap, stopMap)
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 
-	return lineMap, stopMap, nil
+	stopLineMap := map[*types.Stop][]*types.Line{}
+
+	for _, line := range *lineMap {
+		for _, stop := range line.Stops {
+			if _, ok := stopLineMap[stop]; !ok {
+				stopLineMap[stop] = []*types.Line{}
+			}
+			stopLineMap[stop] = append(stopLineMap[stop], line)
+		}
+	}
+
+	data.LinesNames = *lineMap
+	data.StopNames = *stopMap
+	data.Stops = stops
+	data.Lines = lines
+	data.StopLineMap = stopLineMap
+
+	return nil
 }
 
 func expectLine(line, str string) error {

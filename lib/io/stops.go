@@ -9,11 +9,11 @@ import (
 	"github.com/lspaccatrosi16/tmappr/lib/util"
 )
 
-func doStops(counter *int, iptLines *[]string) (*map[string]*types.Stop, error) {
+func doStops(counter *int, iptLines *[]string) (*map[string]*types.Stop, []*types.Stop, error) {
 	logger := logging.GetLogger()
 
 	if err := expectLine((*iptLines)[*counter], "[Stops]"); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	(*counter)++
@@ -40,7 +40,7 @@ func doStops(counter *int, iptLines *[]string) (*map[string]*types.Stop, error) 
 
 		parsed, err := types.ParseStop((*iptLines)[*counter])
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		parsed.Id = stopId
@@ -58,5 +58,5 @@ func doStops(counter *int, iptLines *[]string) (*map[string]*types.Stop, error) 
 		stopMap[s.Name] = s
 	}
 
-	return &stopMap, nil
+	return &stopMap, stops, nil
 }

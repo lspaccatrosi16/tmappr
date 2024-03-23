@@ -9,6 +9,7 @@ import (
 	"github.com/lspaccatrosi16/tmappr/lib/engine"
 	"github.com/lspaccatrosi16/tmappr/lib/flags"
 	"github.com/lspaccatrosi16/tmappr/lib/io"
+	"github.com/lspaccatrosi16/tmappr/lib/types"
 )
 
 func main() {
@@ -17,20 +18,21 @@ func main() {
 	config, err := flags.GetFlagData()
 	handle(err)
 
+	data := types.AppData{}
+
 	logger.SetVerbose(config.Verbose)
 	logger.Debug("Parsing Input File")
 
-	lineMap, stopMap, err := io.ParseFile(config)
+	err = io.ParseFile(config, &data)
 	handle(err)
 
-	pathings, cStopMap, combinedGrid, maxX, maxY, err := engine.RunEngine(config, lineMap, stopMap)
+	err = engine.RunEngine(config, &data)
 	handle(err)
 
-	drawn := drawer.DrawMap(config, pathings, &cStopMap, lineMap, combinedGrid, maxX, maxY)
+	drawn := drawer.DrawMap(config, &data)
 
 	err = io.OutputFile(config, drawn)
 	handle(err)
-
 }
 
 func handle(e error) {

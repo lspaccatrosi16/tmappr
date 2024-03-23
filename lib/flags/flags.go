@@ -6,16 +6,19 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lspaccatrosi16/go-libs/structures/enum"
 	"github.com/lspaccatrosi16/tmappr/lib/types"
 )
 
 var input = flag.String("i", "", "input location")
 var output = flag.String("o", "", "output location")
-var format = flag.String("f", "", "output format")
-var width = flag.Int("w", 0, "line width")
-var lineEnding = flag.String("l", "", "line ending")
+var format = flag.String("f", "svg", "output format")
+var width = flag.Int("w", 6, "line width")
+var lineEnding = flag.String("l", "LF", "line ending")
 var verbose = flag.Bool("v", false, "verbose logging")
 var res = flag.String("r", "", "resolution (x:y)")
+var simRes = flag.Int("sr", 4, "simulation resolution")
+var pathfinder = flag.String("p", "astar", "pathfinding algorithm")
 
 func GetFlagData() (*types.AppConfig, error) {
 	flag.Parse()
@@ -35,7 +38,7 @@ func GetFlagData() (*types.AppConfig, error) {
 	chosenFormat := types.GetFormat(*format)
 
 	if !chosenFormat.IsValid() {
-		return nil, fmt.Errorf("invalid format, %s\nAvailable formats: %s", *format, strings.Join(types.All[types.Format](), ", "))
+		return nil, fmt.Errorf("invalid format, %s\nAvailable formats: %s", *format, strings.Join(enum.All[types.Format](), ", "))
 	}
 
 	if *width == 0 {
@@ -49,7 +52,7 @@ func GetFlagData() (*types.AppConfig, error) {
 	chosenEnding := types.GetEnding(*lineEnding)
 
 	if !chosenEnding.IsValid() {
-		return nil, fmt.Errorf("invalid format, %s\nAvailable formats: %s", *format, strings.Join(types.All[types.LineEnding](), ", "))
+		return nil, fmt.Errorf("invalid format, %s\nAvailable formats: %s", *format, strings.Join(enum.All[types.LineEnding](), ", "))
 	}
 
 	if *res == "" {
@@ -70,6 +73,16 @@ func GetFlagData() (*types.AppConfig, error) {
 		return nil, fmt.Errorf("resolution y has invalid format")
 	}
 
+	if *pathfinder == "" {
+		return nil, fmt.Errorf("missing or empty pathfinder (-p)")
+	}
+
+	chosenAlgorithm := types.GetAlgorithm(*pathfinder)
+
+	if !chosenAlgorithm.IsValid() {
+		return nil, fmt.Errorf("invalid pathfinder, %s\nAvailable pathfinders: %s", *pathfinder, strings.Join(enum.All[types.Algorithm](), ", "))
+	}
+
 	return &types.AppConfig{
 		Input:     *input,
 		Output:    *output,
@@ -79,5 +92,7 @@ func GetFlagData() (*types.AppConfig, error) {
 		Verbose:   *verbose,
 		XRes:      xRes,
 		YRes:      yRes,
+		Simres:    *simRes,
+		Algorithm: chosenAlgorithm,
 	}, nil
 }
