@@ -20,13 +20,11 @@ func RunEngine(config *types.AppConfig, data *types.AppData) error {
 	approxCoordinate := approxCoordinateMake(float64(config.Simres))
 
 	grid := cartesian.CoordinateGrid[int]{}
-	coordinates := []cartesian.Coordinate{}
 	cStopMap := map[cartesian.Coordinate]*types.Stop{}
 
 	for _, s := range data.Stops {
 		coord := approxCoordinate(s.Coordinates[0], s.Coordinates[1])
 		grid.Add(coord, s.Id)
-		coordinates = append(coordinates, coord)
 		cStopMap[coord] = s
 	}
 
