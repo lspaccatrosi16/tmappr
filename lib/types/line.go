@@ -17,7 +17,7 @@ type Line struct {
 func ParseLine(raw string) (*Line, error) {
 	components := strings.Split(util.Trim(raw), ",")
 	if len(components) != 3 {
-		return nil, fmt.Errorf("expected entry to have 3 components, not %d", len(components))
+		return nil, fmt.Errorf("expected line entry to have 3 components, not %d", len(components))
 	}
 
 	for i := 0; i < len(components); i++ {

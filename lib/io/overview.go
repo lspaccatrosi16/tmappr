@@ -27,7 +27,7 @@ func doOverview(counter *int, iptLines *[]string) (*map[string]*types.Line, []*t
 			break
 		}
 
-		if (*iptLines)[*counter] == "" {
+		if util.Trim((*iptLines)[*counter]) == "" {
 			(*counter)++
 			continue
 		}

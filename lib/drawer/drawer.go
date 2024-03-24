@@ -177,7 +177,7 @@ func scalefn(scale float64) func(c int) int {
 	}
 }
 
-func checkAdjacent(grid *cartesian.CoordinateGrid[int], c cartesian.Coordinate, d cartesian.Direction, linesegment *types.Corridor) bool {
+func checkAdjacent(grid *cartesian.CoordinateGrid[int], c cartesian.Coordinate, d cartesian.Direction, linesegment *types.CompoundSegment) bool {
 	if linesegment.Gradient == d || linesegment.Gradient.Opposite() == d {
 		return false
 	}

@@ -1,22 +1,31 @@
 [Lines]
 "A line", #ff0000, a-001
 "B line", #0000ff, a-002
-"C line", #b31980, a-003
+"C line", #aa0080, a-003
+"D line", #107000, a-004
 
 [Stops]
 "Kensal Rise", [0/0]
-"Gospel Oak", [1/1], Auto, South
-"Hampstead Heath", [3/3]
+"Denmark Hill", [0/1]
+"Dalston Junction", [3/4]
+"Peckham Rye", [2/4]
 "Richmond", [4/4]
 "Stratford", [4/0]
 "Litchfield Trent Valley", [4/2], Normal
 "Hadley Wood", [0/2]
+"York", [0/4]
+"Rugby", [3/3]
+"Nuneaton", [4/1], Normal
+"Stoke", [3/1], Auto, NorthWest
 
 [a-001]
-"Kensal Rise", "Hadley Wood", "Hampstead Heath", "Richmond", "Stratford"
+"Kensal Rise", "Denmark Hill", "Hadley Wood","Peckham Rye", "Dalston Junction", "Richmond", "Stratford"
 
 [a-002]
-"Richmond", "Litchfield Trent Valley", "Stratford", "Kensal Rise"
+"Richmond", "Litchfield Trent Valley","Nuneaton", "Stratford", "Kensal Rise"
 
 [a-003]
-"Hadley Wood", "Gospel Oak", "Stratford",  "Litchfield Trent Valley", "Richmond"
+"York", "Peckham Rye", "Rugby","Stoke", "Stratford"
+
+[a-004]
+"Kensal Rise", "Denmark Hill", "Stoke", "Litchfield Trent Valley", "Richmond"

@@ -3,53 +3,70 @@
 <svg width="800" height="800"
      xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink">
-<polyline points="190,190 190,406" style="stroke: #ff0000; stroke-width: 6px" />
+<polyline points="406,622 190,406" style="stroke: #ff0000; stroke-width: 6px" />
 <circle cx="190" cy="406" r="3" style="fill: #ff0000" />
-<polyline points="190,406 406,622" style="stroke: #ff0000; stroke-width: 6px" />
-<circle cx="406" cy="622" r="3" style="fill: #ff0000" />
-<polyline points="406,622 514,514" style="stroke: #ff0000; stroke-width: 6px" />
-<circle cx="514" cy="514" r="3" style="fill: #ff0000" />
-<polyline points="514,514 622,622" style="stroke: #ff0000; stroke-width: 6px" />
-<circle cx="622" cy="622" r="3" style="fill: #ff0000" />
-<polyline points="217,163 190,190" style="stroke: #0000ff; stroke-width: 6px" />
-<circle cx="190" cy="190" r="3" style="fill: #0000ff" />
-<polyline points="190,406 433,163" style="stroke: #b31980; stroke-width: 6px" />
-<circle cx="433" cy="163" r="3" style="fill: #b31980" />
-<polyline points="595,160 433,160" style="stroke: #0000ff; stroke-width: 6px" />
-<circle cx="433" cy="160" r="3" style="fill: #0000ff" />
-<polyline points="595,166 433,166" style="stroke: #b31980; stroke-width: 6px" />
-<circle cx="433" cy="166" r="3" style="fill: #b31980" />
-<polyline points="433,163 217,163" style="stroke: #0000ff; stroke-width: 6px" />
-<circle cx="217" cy="163" r="3" style="fill: #0000ff" />
-<polyline points="619,187 592,160" style="stroke: #0000ff; stroke-width: 6px" />
-<circle cx="592" cy="160" r="3" style="fill: #0000ff" />
-<polyline points="625,193 598,166" style="stroke: #b31980; stroke-width: 6px" />
-<circle cx="598" cy="166" r="3" style="fill: #b31980" />
-<polyline points="616,622 616,190" style="stroke: #ff0000; stroke-width: 6px" />
-<circle cx="616" cy="190" r="3" style="fill: #ff0000" />
-<polyline points="622,622 622,190" style="stroke: #0000ff; stroke-width: 6px" />
+<polyline points="190,190 622,190" style="stroke: #0000ff; stroke-width: 6px" />
 <circle cx="622" cy="190" r="3" style="fill: #0000ff" />
-<polyline points="628,622 628,190" style="stroke: #b31980; stroke-width: 6px" />
-<circle cx="628" cy="190" r="3" style="fill: #b31980" />
+<polyline points="622,190 514,298" style="stroke: #aa0080; stroke-width: 6px" />
+<circle cx="514" cy="298" r="3" style="fill: #aa0080" />
+<polyline points="514,298 514,514" style="stroke: #aa0080; stroke-width: 6px" />
+<circle cx="514" cy="514" r="3" style="fill: #aa0080" />
+<polyline points="514,514 406,622" style="stroke: #aa0080; stroke-width: 6px" />
+<circle cx="406" cy="622" r="3" style="fill: #aa0080" />
+<polyline points="622,622 406,622" style="stroke: #ff0000; stroke-width: 6px" />
+<circle cx="406" cy="622" r="3" style="fill: #ff0000" />
+<polyline points="406,622 190,622" style="stroke: #aa0080; stroke-width: 6px" />
+<circle cx="190" cy="622" r="3" style="fill: #aa0080" />
+<polyline points="619,190 619,406" style="stroke: #ff0000; stroke-width: 6px" />
+<circle cx="619" cy="406" r="3" style="fill: #ff0000" />
+<polyline points="625,190 625,406" style="stroke: #0000ff; stroke-width: 6px" />
+<circle cx="625" cy="406" r="3" style="fill: #0000ff" />
+<polyline points="616,406 616,622" style="stroke: #ff0000; stroke-width: 6px" />
+<circle cx="616" cy="622" r="3" style="fill: #ff0000" />
+<polyline points="622,406 622,622" style="stroke: #0000ff; stroke-width: 6px" />
+<circle cx="622" cy="622" r="3" style="fill: #0000ff" />
+<polyline points="628,406 628,622" style="stroke: #107000; stroke-width: 6px" />
+<circle cx="628" cy="622" r="3" style="fill: #107000" />
+<polyline points="622,406 514,298" style="stroke: #107000; stroke-width: 6px" />
+<circle cx="514" cy="298" r="3" style="fill: #107000" />
+<polyline points="514,298 190,298" style="stroke: #107000; stroke-width: 6px" />
+<circle cx="190" cy="298" r="3" style="fill: #107000" />
+<polyline points="190,406 190,298" style="stroke: #ff0000; stroke-width: 6px" />
+<circle cx="190" cy="298" r="3" style="fill: #ff0000" />
+<polyline points="187,298 187,190" style="stroke: #ff0000; stroke-width: 6px" />
+<circle cx="187" cy="190" r="3" style="fill: #ff0000" />
+<polyline points="193,298 193,190" style="stroke: #107000; stroke-width: 6px" />
+<circle cx="193" cy="190" r="3" style="fill: #107000" />
+<rect x="613" y="613" width="18" height="18" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<text x="661" y="625" style="font-size: 9px; text-anchor: middle;" >Richmond</text>
+<rect x="186" y="618" width="9" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<text x="190" y="592" style="font-size: 9px; text-anchor: middle;" >York</text>
+<circle cx="514" cy="514" r="2" style="fill: #ffffff" />
+<text x="547" y="517" style="font-size: 9px; text-anchor: middle;" >Rugby</text>
+<circle cx="625" cy="298" r="2" style="fill: #ffffff" />
+<text x="658" y="301" style="font-size: 9px; text-anchor: middle;" >Nuneaton</text>
+<rect x="510" y="294" width="9" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<text x="481" y="268" style="font-size: 9px; text-anchor: middle;" >Stoke</text>
+<rect x="184" y="292" width="12" height="12" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<text x="154" y="294" style="font-size: 9px; text-anchor: middle;" >Denmark</text>
+<text x="154" y="308" style="font-size: 9px; text-anchor: middle;" >Hill</text>
+<rect x="402" y="618" width="9" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<text x="406" y="651" style="font-size: 9px; text-anchor: middle;" >Peckham</text>
+<text x="406" y="665" style="font-size: 9px; text-anchor: middle;" >Rye</text>
+<rect x="616" y="184" width="12" height="12" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<text x="658" y="193" style="font-size: 9px; text-anchor: middle;" >Stratford</text>
 <circle cx="622" cy="406" r="2" style="fill: #ffffff" />
 <circle cx="628" cy="406" r="2" style="fill: #ffffff" />
 <text x="661" y="402" style="font-size: 9px; text-anchor: middle;" >Litchfield</text>
 <text x="661" y="416" style="font-size: 9px; text-anchor: middle;" >Trent</text>
 <text x="661" y="430" style="font-size: 9px; text-anchor: middle;" >Valley</text>
-<rect x="186" y="402" width="9" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<circle cx="190" cy="406" r="2" style="fill: #ffffff" />
 <text x="157" y="402" style="font-size: 9px; text-anchor: middle;" >Hadley</text>
 <text x="157" y="416" style="font-size: 9px; text-anchor: middle;" >Wood</text>
-<rect x="186" y="186" width="9" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
-<text x="157" y="186" style="font-size: 9px; text-anchor: middle;" >Kensal</text>
-<text x="157" y="200" style="font-size: 9px; text-anchor: middle;" >Rise</text>
-<circle cx="298" cy="298" r="2" style="fill: #ffffff" />
-<text x="298" y="327" style="font-size: 9px; text-anchor: middle;" >Gospel</text>
-<text x="298" y="341" style="font-size: 9px; text-anchor: middle;" >Oak</text>
-<circle cx="514" cy="514" r="2" style="fill: #ffffff" />
-<text x="514" y="477" style="font-size: 9px; text-anchor: middle;" >Hampstead</text>
-<text x="514" y="491" style="font-size: 9px; text-anchor: middle;" >Heath</text>
-<rect x="613" y="613" width="18" height="18" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
-<text x="661" y="625" style="font-size: 9px; text-anchor: middle;" >Richmond</text>
-<rect x="613" y="181" width="18" height="18" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
-<text x="661" y="193" style="font-size: 9px; text-anchor: middle;" >Stratford</text>
+<rect x="184" y="184" width="12" height="12" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<text x="154" y="186" style="font-size: 9px; text-anchor: middle;" >Kensal</text>
+<text x="154" y="200" style="font-size: 9px; text-anchor: middle;" >Rise</text>
+<circle cx="514" cy="622" r="2" style="fill: #ffffff" />
+<text x="514" y="585" style="font-size: 9px; text-anchor: middle;" >Dalston</text>
+<text x="514" y="599" style="font-size: 9px; text-anchor: middle;" >Junction</text>
 </svg>

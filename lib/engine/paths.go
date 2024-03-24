@@ -38,6 +38,8 @@ func GetLinePath(config *types.AppConfig, line *types.Line, grid *cartesian.Coor
 	}
 	pathSections := [][]cartesian.Coordinate{}
 
+	mx, my := grid.MaxBounds()
+
 	switch config.Algorithm {
 	case types.Dijkstra:
 		genGraph, graphGridMap := grid.CreateGraph(false, []int{}, true)
@@ -56,7 +58,7 @@ func GetLinePath(config *types.AppConfig, line *types.Line, grid *cartesian.Coor
 		forwardsSections := [][]cartesian.Coordinate{}
 		backwardsSections := [][]cartesian.Coordinate{}
 		for _, leg := range legs {
-			result, endingDirection, cost := useAstar(leg, currentDirection)
+			result, endingDirection, cost := useAstar(leg, currentDirection, mx, my)
 			forwardsCost += cost
 			currentDirection = endingDirection
 
@@ -68,13 +70,13 @@ func GetLinePath(config *types.AppConfig, line *types.Line, grid *cartesian.Coor
 		currentDirection = cartesian.NoDirection
 
 		for _, leg := range legs {
-			result, endingDirection, cost := useAstar(pathLeg{leg[1], leg[0]}, currentDirection)
+			result, endingDirection, cost := useAstar(pathLeg{leg[1], leg[0]}, currentDirection, mx+2, my+2)
 			backwardsCost += cost
 			currentDirection = endingDirection
 			backwardsSections = append(backwardsSections, result)
 		}
 
-		if forwardsCost < backwardsCost {
+		if forwardsCost <= backwardsCost {
 			pathSections = forwardsSections
 		} else {
 			pathSections = backwardsSections
@@ -82,8 +84,6 @@ func GetLinePath(config *types.AppConfig, line *types.Line, grid *cartesian.Coor
 	}
 
 	repreGrid := cartesian.CoordinateGrid[string]{}
-
-	mx, my := grid.MaxBounds()
 
 	for x := 0; x <= mx; x++ {
 		for y := 0; y <= my; y++ {
@@ -95,6 +95,9 @@ func GetLinePath(config *types.AppConfig, line *types.Line, grid *cartesian.Coor
 
 	lastEnd := coordinates[0]
 	for _, section := range pathSections {
+		if len(section) == 0 {
+			continue
+		}
 		if section[0] != lastEnd {
 			slices.Reverse(section)
 		}
@@ -148,8 +151,8 @@ func useDijkstra(leg pathLeg, graphGridMap map[cartesian.Coordinate]*cartesian.G
 	return path, nil
 }
 
-func useAstar(leg pathLeg, startingDirection cartesian.Direction) ([]cartesian.Coordinate, cartesian.Direction, float64) {
-	path, cost := astar.Pathfind(leg[0], leg[1], startingDirection)
+func useAstar(leg pathLeg, startingDirection cartesian.Direction, maxX, maxY int) ([]cartesian.Coordinate, cartesian.Direction, float64) {
+	path, cost := astar.Pathfind(leg[0], leg[1], startingDirection, maxX, maxY)
 	if len(path) < 2 {
 		return path, cartesian.NoDirection, cost
 	}

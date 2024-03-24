@@ -3,19 +3,20 @@ package types
 import (
 	"bytes"
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/lspaccatrosi16/go-libs/structures/cartesian"
 )
 
-type Corridor struct {
+type CompoundSegment struct {
 	Lines []*Line
 	LineSegment
 	XOffsets []int
 	YOffsets []int
 }
 
-func (c *Corridor) String() string {
+func (c *CompoundSegment) String() string {
 	lineNames := []string{}
 	for _, l := range c.Lines {
 		lineNames = append(lineNames, l.Code)
@@ -23,8 +24,8 @@ func (c *Corridor) String() string {
 	return fmt.Sprintf("%s: %s", c.LineSegment.String(), strings.Join(lineNames, ", "))
 }
 
-func (c *Corridor) Subsegment(start, end cartesian.Coordinate, newLine *Line) []*Corridor {
-	newSegments := []*Corridor{}
+func (c *CompoundSegment) Subsegment(start, end cartesian.Coordinate, newLines ...*Line) []*CompoundSegment {
+	newSegments := []*CompoundSegment{}
 
 	if c.Gradient == new(cartesian.Direction).FromCoordinates(end.Subtract(start)).Opposite() {
 		start, end = end, start
@@ -38,14 +39,14 @@ func (c *Corridor) Subsegment(start, end cartesian.Coordinate, newLine *Line) []
 				break
 			}
 		}
-		newSegments = append(newSegments, &Corridor{
+		newSegments = append(newSegments, &CompoundSegment{
 			Lines:       c.Lines,
 			LineSegment: NewLineSegment(c.Start, newEnd, c.Gradient),
 		})
 	}
 
-	newSegments = append(newSegments, &Corridor{
-		Lines:       append(c.Lines, newLine),
+	newSegments = append(newSegments, &CompoundSegment{
+		Lines:       append(c.Lines, newLines...),
 		LineSegment: NewLineSegment(start, end, c.Gradient),
 	})
 
@@ -57,7 +58,7 @@ func (c *Corridor) Subsegment(start, end cartesian.Coordinate, newLine *Line) []
 				break
 			}
 		}
-		newSegments = append(newSegments, &Corridor{
+		newSegments = append(newSegments, &CompoundSegment{
 			Lines:       c.Lines,
 			LineSegment: NewLineSegment(newStart, c.End, c.Gradient),
 		})
@@ -67,7 +68,7 @@ func (c *Corridor) Subsegment(start, end cartesian.Coordinate, newLine *Line) []
 }
 
 type PathedSystem struct {
-	Segments []*Corridor
+	Segments []*CompoundSegment
 }
 
 func (p *PathedSystem) String() string {
@@ -78,7 +79,16 @@ func (p *PathedSystem) String() string {
 	return buf.String()
 }
 
-func (p *PathedSystem) FindCSegment(seg LineSegment) *Corridor {
+func (p *PathedSystem) FindCSegment(seg LineSegment) *CompoundSegment {
+	for _, segment := range p.Segments {
+		if segment.PointInLine(seg.Start) && segment.Gradient == seg.Gradient {
+			return segment
+		}
+	}
+	return nil
+}
+
+func (p *PathedSystem) FindCSegmentRemove(seg LineSegment) *CompoundSegment {
 	for i, segment := range p.Segments {
 		if segment.PointInLine(seg.Start) && segment.Gradient == seg.Gradient {
 			p.Segments = append(p.Segments[:i], p.Segments[i+1:]...)
@@ -88,8 +98,8 @@ func (p *PathedSystem) FindCSegment(seg LineSegment) *Corridor {
 	return nil
 }
 
-func (p *PathedSystem) FindPrimarySegmentWithPoint(c cartesian.Coordinate) *Corridor {
-	var chosen *Corridor
+func (p *PathedSystem) FindPrimarySegmentWithPoint(c cartesian.Coordinate) *CompoundSegment {
+	var chosen *CompoundSegment
 	maxLines := 0
 	for _, seg := range p.Segments {
 		if seg.PointInLine(c) {
@@ -103,11 +113,15 @@ func (p *PathedSystem) FindPrimarySegmentWithPoint(c cartesian.Coordinate) *Corr
 	return chosen
 }
 
-func (p *PathedSystem) AddSegment(c ...*Corridor) {
+func (p *PathedSystem) AddSegment(c ...*CompoundSegment) {
 	p.Segments = append(p.Segments, c...)
 }
 
 func NewLineSegment(start, end cartesian.Coordinate, gradient cartesian.Direction) LineSegment {
+	if new(cartesian.Direction).FromCoordinates(end.Subtract(start)) != gradient {
+		panic("start and end do not match gradient")
+	}
+
 	return LineSegment{
 		Start:    start,
 		End:      end,
@@ -119,6 +133,18 @@ type LineSegment struct {
 	Start    cartesian.Coordinate
 	End      cartesian.Coordinate
 	Gradient cartesian.Direction
+}
+
+func (l *LineSegment) Length() float64 {
+	dx := l.End[0] - l.Start[0]
+	dy := l.End[1] - l.Start[1]
+	return math.Sqrt(float64(dx*dx + dy*dy))
+}
+
+func (l *LineSegment) MLength() int {
+	dx := math.Abs(float64(l.End[0] - l.Start[0]))
+	dy := math.Abs(float64(l.End[1] - l.Start[1]))
+	return int(dx + dy)
 }
 
 func (l *LineSegment) Reverse() LineSegment {
