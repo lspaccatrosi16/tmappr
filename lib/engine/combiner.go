@@ -43,7 +43,7 @@ func CombineSegments(pathings []*types.PathedLine, maxX, maxY int) (*types.Pathe
 }
 
 func includeSegment(system *types.PathedSystem, line *types.Line, segment types.LineSegment) {
-	var existingSegment *types.CompoundSegment
+	var existingSegment *types.Corridor
 	forwardsSegment := system.FindCSegment(segment)
 	backwardsSegment := system.FindCSegment(segment.Reverse())
 
@@ -54,7 +54,7 @@ func includeSegment(system *types.PathedSystem, line *types.Line, segment types.
 	}
 
 	if existingSegment == nil {
-		newSeg := types.CompoundSegment{
+		newSeg := types.Corridor{
 			Lines:       []*types.Line{line},
 			LineSegment: segment,
 		}

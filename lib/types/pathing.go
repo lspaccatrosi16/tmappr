@@ -8,14 +8,14 @@ import (
 	"github.com/lspaccatrosi16/go-libs/structures/cartesian"
 )
 
-type CompoundSegment struct {
+type Corridor struct {
 	Lines []*Line
 	LineSegment
 	XOffsets []int
 	YOffsets []int
 }
 
-func (c *CompoundSegment) String() string {
+func (c *Corridor) String() string {
 	lineNames := []string{}
 	for _, l := range c.Lines {
 		lineNames = append(lineNames, l.Code)
@@ -23,8 +23,8 @@ func (c *CompoundSegment) String() string {
 	return fmt.Sprintf("%s: %s", c.LineSegment.String(), strings.Join(lineNames, ", "))
 }
 
-func (c *CompoundSegment) Subsegment(start, end cartesian.Coordinate, newLine *Line) []*CompoundSegment {
-	newSegments := []*CompoundSegment{}
+func (c *Corridor) Subsegment(start, end cartesian.Coordinate, newLine *Line) []*Corridor {
+	newSegments := []*Corridor{}
 
 	if c.Gradient == new(cartesian.Direction).FromCoordinates(end.Subtract(start)).Opposite() {
 		start, end = end, start
@@ -38,13 +38,13 @@ func (c *CompoundSegment) Subsegment(start, end cartesian.Coordinate, newLine *L
 				break
 			}
 		}
-		newSegments = append(newSegments, &CompoundSegment{
+		newSegments = append(newSegments, &Corridor{
 			Lines:       c.Lines,
 			LineSegment: NewLineSegment(c.Start, newEnd, c.Gradient),
 		})
 	}
 
-	newSegments = append(newSegments, &CompoundSegment{
+	newSegments = append(newSegments, &Corridor{
 		Lines:       append(c.Lines, newLine),
 		LineSegment: NewLineSegment(start, end, c.Gradient),
 	})
@@ -57,7 +57,7 @@ func (c *CompoundSegment) Subsegment(start, end cartesian.Coordinate, newLine *L
 				break
 			}
 		}
-		newSegments = append(newSegments, &CompoundSegment{
+		newSegments = append(newSegments, &Corridor{
 			Lines:       c.Lines,
 			LineSegment: NewLineSegment(newStart, c.End, c.Gradient),
 		})
@@ -67,7 +67,7 @@ func (c *CompoundSegment) Subsegment(start, end cartesian.Coordinate, newLine *L
 }
 
 type PathedSystem struct {
-	Segments []*CompoundSegment
+	Segments []*Corridor
 }
 
 func (p *PathedSystem) String() string {
@@ -78,7 +78,7 @@ func (p *PathedSystem) String() string {
 	return buf.String()
 }
 
-func (p *PathedSystem) FindCSegment(seg LineSegment) *CompoundSegment {
+func (p *PathedSystem) FindCSegment(seg LineSegment) *Corridor {
 	for i, segment := range p.Segments {
 		if segment.PointInLine(seg.Start) && segment.Gradient == seg.Gradient {
 			p.Segments = append(p.Segments[:i], p.Segments[i+1:]...)
@@ -88,8 +88,8 @@ func (p *PathedSystem) FindCSegment(seg LineSegment) *CompoundSegment {
 	return nil
 }
 
-func (p *PathedSystem) FindPrimarySegmentWithPoint(c cartesian.Coordinate) *CompoundSegment {
-	var chosen *CompoundSegment
+func (p *PathedSystem) FindPrimarySegmentWithPoint(c cartesian.Coordinate) *Corridor {
+	var chosen *Corridor
 	maxLines := 0
 	for _, seg := range p.Segments {
 		if seg.PointInLine(c) {
@@ -103,7 +103,7 @@ func (p *PathedSystem) FindPrimarySegmentWithPoint(c cartesian.Coordinate) *Comp
 	return chosen
 }
 
-func (p *PathedSystem) AddSegment(c ...*CompoundSegment) {
+func (p *PathedSystem) AddSegment(c ...*Corridor) {
 	p.Segments = append(p.Segments, c...)
 }
 

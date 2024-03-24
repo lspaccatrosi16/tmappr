@@ -1,6 +1,7 @@
 package astar
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/lspaccatrosi16/go-libs/structures/cartesian"
@@ -84,6 +85,7 @@ func Pathfind(start, end cartesian.Coordinate, startingDirection cartesian.Direc
 				if current.Direction != neighbor.Direction {
 					cwDiff := current.Direction.NumberCw(neighbor.Direction)
 					acwDiff := current.Direction.NumberAcw(neighbor.Direction)
+					fmt.Println("turn", current.Direction, neighbor.Direction, cwDiff, acwDiff)
 					if cwDiff < 2 || acwDiff < 2 {
 						neighbor.Cost += directionCost
 					} else if cwDiff == 2 || acwDiff == 2 {
