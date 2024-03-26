@@ -19,6 +19,7 @@ var verbose = flag.Bool("v", false, "verbose logging")
 var res = flag.String("r", "", "resolution (x:y)")
 var simRes = flag.Int("sr", 4, "simulation resolution")
 var pathfinder = flag.String("p", "astar", "pathfinding algorithm")
+var refineCycles = flag.Int("rc", 10, "refine iterations")
 
 func GetFlagData() (*types.AppConfig, error) {
 	flag.Parse()
@@ -84,15 +85,16 @@ func GetFlagData() (*types.AppConfig, error) {
 	}
 
 	return &types.AppConfig{
-		Input:     *input,
-		Output:    *output,
-		Format:    chosenFormat,
-		Linewidth: *width,
-		Ending:    chosenEnding,
-		Verbose:   *verbose,
-		XRes:      xRes,
-		YRes:      yRes,
-		Simres:    *simRes,
-		Algorithm: chosenAlgorithm,
+		Input:        *input,
+		Output:       *output,
+		Format:       chosenFormat,
+		Linewidth:    *width,
+		Ending:       chosenEnding,
+		Verbose:      *verbose,
+		XRes:         xRes,
+		YRes:         yRes,
+		Simres:       *simRes,
+		Algorithm:    chosenAlgorithm,
+		RefineCycles: *refineCycles,
 	}, nil
 }

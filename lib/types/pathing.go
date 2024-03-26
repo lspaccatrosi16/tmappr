@@ -88,14 +88,13 @@ func (p *PathedSystem) FindCSegment(seg LineSegment) *CompoundSegment {
 	return nil
 }
 
-func (p *PathedSystem) FindCSegmentRemove(seg LineSegment) *CompoundSegment {
+func (p *PathedSystem) RemoveSegment(seg *CompoundSegment) {
 	for i, segment := range p.Segments {
-		if segment.PointInLine(seg.Start) && segment.Gradient == seg.Gradient {
+		if segment == seg {
 			p.Segments = append(p.Segments[:i], p.Segments[i+1:]...)
-			return segment
+			return
 		}
 	}
-	return nil
 }
 
 func (p *PathedSystem) FindPrimarySegmentWithPoint(c cartesian.Coordinate) *CompoundSegment {

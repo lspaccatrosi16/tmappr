@@ -18,8 +18,6 @@
 "Nuneaton", [4/1], Normal
 "Stoke", [3/1], Auto, NorthWest
 
-[a-001]
-"Kensal Rise", "Denmark Hill", "Hadley Wood","Peckham Rye", "Dalston Junction", "Richmond", "Stratford"
 
 [a-002]
 "Richmond", "Litchfield Trent Valley","Nuneaton", "Stratford", "Kensal Rise"
@@ -29,3 +27,6 @@
 
 [a-004]
 "Kensal Rise", "Denmark Hill", "Stoke", "Litchfield Trent Valley", "Richmond"
+
+[a-001]
+"Kensal Rise", "Denmark Hill", "Hadley Wood","Peckham Rye", "Dalston Junction", "Richmond", "Stratford"

@@ -32,8 +32,8 @@ func RunEngine(config *types.AppConfig, data *types.AppData) error {
 
 	pathings := []*types.PathedLine{}
 
-	for name, line := range data.LinesNames {
-		logger.Debug(fmt.Sprintf("Pathfind %s", name))
+	for _, line := range data.LinesNames {
+		logger.Debug(fmt.Sprintf("Pathfind %s", line.Code))
 
 		path, err := GetLinePath(config, line, &grid, &cStopMap)
 		if err != nil {
@@ -46,7 +46,7 @@ func RunEngine(config *types.AppConfig, data *types.AppData) error {
 
 	}
 
-	combined, combinedGrid := CombineSegments(pathings, maxX+1, maxY+1)
+	combined, combinedGrid := CombineSegments(config, pathings, maxX+1, maxY+1)
 
 	data.Pathings = combined
 	data.UsedGrid = combinedGrid

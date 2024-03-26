@@ -13,7 +13,7 @@ import (
 	"github.com/lspaccatrosi16/tmappr/lib/util"
 )
 
-const borderOffset = 300
+const borderOffset = 100
 
 func DrawMap(config *types.AppConfig, data *types.AppData) *bytes.Buffer {
 	util.DebugSection("Drawing Map")

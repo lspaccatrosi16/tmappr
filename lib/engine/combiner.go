@@ -9,7 +9,7 @@ import (
 	"github.com/lspaccatrosi16/tmappr/lib/util"
 )
 
-func CombineSegments(pathings []*types.PathedLine, maxX, maxY int) (*types.PathedSystem, *cartesian.CoordinateGrid[int]) {
+func CombineSegments(config *types.AppConfig, pathings []*types.PathedLine, maxX, maxY int) (*types.PathedSystem, *cartesian.CoordinateGrid[int]) {
 	logger := logging.GetLogger()
 	util.DebugSection("Combine Lines into Greater Map")
 
@@ -36,10 +36,174 @@ func CombineSegments(pathings []*types.PathedLine, maxX, maxY int) (*types.Pathe
 		}
 	}
 
-	logger.Debug("Used Grid")
-	logger.Debug(grid.String())
+	refineSystem(config, &system)
 
 	return &system, &grid
+}
+
+func findConflicts(system *types.PathedSystem) [][]*types.CompoundSegment {
+	used := map[cartesian.Coordinate]map[cartesian.Direction][]*types.CompoundSegment{}
+
+	for _, seg := range system.Segments {
+		for _, point := range seg.Points() {
+			if used[point] == nil {
+				used[point] = map[cartesian.Direction][]*types.CompoundSegment{}
+			}
+
+			used[point][seg.Gradient] = append(used[point][seg.Gradient], seg)
+		}
+	}
+
+	combinedList := [][]*types.CompoundSegment{}
+
+	for _, c := range used {
+		for dir, segs := range c {
+			if len(segs) > 1 && !compountListContains(combinedList, segs, dir) {
+				combinedList = append(combinedList, segs)
+			}
+		}
+	}
+	return combinedList
+}
+
+var refineCount = 0
+
+func refineSystem(config *types.AppConfig, system *types.PathedSystem) {
+
+	util.DebugSection("Refine System")
+
+	combinedList := findConflicts(system)
+
+	for len(combinedList) > 0 {
+		refineCount++
+
+		if refineCount > config.RefineCycles {
+			break
+		}
+
+		list := combinedList[0]
+		if len(list) < 2 {
+			continue
+		}
+		system.RemoveSegment(list[0])
+		system.RemoveSegment(list[1])
+		produced := joinSegments(list[0], list[1].LineSegment, list[1].Lines)
+		system.AddSegment(produced...)
+		combinedList = findConflicts(system)
+	}
+
+}
+
+func compountListContains(list [][]*types.CompoundSegment, item []*types.CompoundSegment, dir cartesian.Direction) bool {
+	seen := map[*types.CompoundSegment]bool{}
+
+	for _, seg := range item {
+		seen[seg] = true
+	}
+
+	for _, l := range list {
+		if len(l) != len(item) {
+			continue
+		}
+
+		match := true
+		for _, seg := range l {
+			_, ok := seen[seg]
+			if !ok || seg.Gradient != dir {
+				match = false
+				break
+			}
+
+		}
+
+		if match {
+			return true
+		}
+	}
+	return false
+}
+
+func joinSegments(i1 *types.CompoundSegment, i2 types.LineSegment, lines []*types.Line) []*types.CompoundSegment {
+	if i1.PointInLine(i2.Start) && i1.PointInLine(i2.End) {
+		// segment is entirely within existing segment
+		produced := i1.Subsegment(i2.Start, i2.End, lines...)
+		return produced
+	} else if i2.PointInLine(i1.Start) && i2.PointInLine(i1.End) {
+		// existing segment is entirely within segment
+		invSeg := types.CompoundSegment{
+			Lines:       lines,
+			LineSegment: i2,
+		}
+		produced := invSeg.Subsegment(i1.Start, i1.End, i1.Lines...)
+		return produced
+	} else {
+		// segment and existing segment overlap
+		if i1.Start == i2.End || i1.End == i2.Start {
+			// segment and existing segment are adjacent
+			s := types.CompoundSegment{
+				LineSegment: i2,
+				Lines:       lines,
+			}
+			return []*types.CompoundSegment{i1, &s}
+		} else if i1.PointInLine(i2.Start) {
+			// segment starts within existing segment
+			// so end is beyond existing segment
+			s1 := types.CompoundSegment{
+				LineSegment: types.LineSegment{
+					Start: i1.Start,
+					End:   i2.Start,
+				},
+				Lines: i1.Lines,
+			}
+
+			s2 := types.CompoundSegment{
+				LineSegment: types.LineSegment{
+					Start: i2.Start,
+					End:   s1.End,
+				},
+				Lines: append(s1.Lines, lines...),
+			}
+			s3 := types.CompoundSegment{
+				LineSegment: types.LineSegment{
+					Start: s1.End,
+					End:   i2.End,
+				},
+				Lines: lines,
+			}
+
+			return []*types.CompoundSegment{&s1, &s2, &s3}
+
+		} else if i1.PointInLine(i2.End) {
+			// segment ends within existing segment
+			// so start is before existing segment
+
+			s1 := types.CompoundSegment{
+				LineSegment: types.LineSegment{
+					Start: i2.Start,
+					End:   i1.Start,
+				},
+				Lines: lines,
+			}
+
+			s2 := types.CompoundSegment{
+				LineSegment: types.LineSegment{
+					Start: s1.Start,
+					End:   i2.End,
+				},
+				Lines: append(s1.Lines, lines...),
+			}
+			s3 := types.CompoundSegment{
+				LineSegment: types.LineSegment{
+					Start: i2.End,
+					End:   s1.End,
+				},
+				Lines: s1.Lines,
+			}
+			return []*types.CompoundSegment{&s1, &s2, &s3}
+		} else {
+			panic("segments overlap but not in a way I can handle")
+		}
+	}
 }
 
 func includeSegment(system *types.PathedSystem, line *types.Line, segment types.LineSegment) {
@@ -48,9 +212,11 @@ func includeSegment(system *types.PathedSystem, line *types.Line, segment types.
 	backwardsSegment := system.FindCSegment(segment.Reverse())
 
 	if forwardsSegment != nil {
-		existingSegment = system.FindCSegmentRemove(segment)
+		existingSegment = forwardsSegment
+		system.RemoveSegment(forwardsSegment)
 	} else if backwardsSegment != nil {
-		existingSegment = system.FindCSegmentRemove(segment.Reverse())
+		existingSegment = backwardsSegment
+		system.RemoveSegment(backwardsSegment)
 	}
 
 	if existingSegment == nil {
@@ -60,86 +226,7 @@ func includeSegment(system *types.PathedSystem, line *types.Line, segment types.
 		}
 		system.AddSegment(&newSeg)
 	} else {
-		if existingSegment.PointInLine(segment.Start) && existingSegment.PointInLine(segment.End) {
-			// segment is entirely within existing segment
-			produced := existingSegment.Subsegment(segment.Start, segment.End, line)
-			system.AddSegment(produced...)
-		} else if segment.PointInLine(existingSegment.Start) && segment.PointInLine(existingSegment.End) {
-			// existing segment is entirely within segment
-			invSeg := types.CompoundSegment{
-				Lines:       []*types.Line{line},
-				LineSegment: segment,
-			}
-			produced := invSeg.Subsegment(existingSegment.Start, existingSegment.End, existingSegment.Lines...)
-			system.AddSegment(produced...)
-		} else {
-			// segment and existing segment overlap
-			if existingSegment.Start == segment.End || existingSegment.End == segment.Start {
-				// segment and existing segment are adjacent
-				s := types.CompoundSegment{
-					LineSegment: segment,
-					Lines:       []*types.Line{line},
-				}
-				system.AddSegment(existingSegment, &s)
-			} else if existingSegment.PointInLine(segment.Start) {
-				// segment starts within existing segment
-				// so end is beyond existing segment
-				s1 := types.CompoundSegment{
-					LineSegment: types.LineSegment{
-						Start: existingSegment.Start,
-						End:   segment.Start,
-					},
-					Lines: existingSegment.Lines,
-				}
-
-				s2 := types.CompoundSegment{
-					LineSegment: types.LineSegment{
-						Start: segment.Start,
-						End:   existingSegment.End,
-					},
-					Lines: append(existingSegment.Lines, line),
-				}
-				s3 := types.CompoundSegment{
-					LineSegment: types.LineSegment{
-						Start: existingSegment.End,
-						End:   segment.End,
-					},
-					Lines: []*types.Line{line},
-				}
-
-				system.AddSegment(&s1, &s2, &s3)
-
-			} else if existingSegment.PointInLine(segment.End) {
-				// segment ends within existing segment
-				// so start is before existing segment
-
-				s1 := types.CompoundSegment{
-					LineSegment: types.LineSegment{
-						Start: segment.Start,
-						End:   existingSegment.Start,
-					},
-					Lines: []*types.Line{line},
-				}
-
-				s2 := types.CompoundSegment{
-					LineSegment: types.LineSegment{
-						Start: existingSegment.Start,
-						End:   segment.End,
-					},
-					Lines: append(existingSegment.Lines, line),
-				}
-				s3 := types.CompoundSegment{
-					LineSegment: types.LineSegment{
-						Start: segment.End,
-						End:   existingSegment.End,
-					},
-					Lines: existingSegment.Lines,
-				}
-
-				system.AddSegment(&s1, &s2, &s3)
-			} else {
-				panic("segments overlap but not in a way I can handle")
-			}
-		}
+		produced := joinSegments(existingSegment, segment, []*types.Line{line})
+		system.AddSegment(produced...)
 	}
 }
