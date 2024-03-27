@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/lspaccatrosi16/go-cli-tools/logging"
+	"github.com/lspaccatrosi16/tmappr/lib/arranger"
 	"github.com/lspaccatrosi16/tmappr/lib/drawer"
 	"github.com/lspaccatrosi16/tmappr/lib/engine"
 	"github.com/lspaccatrosi16/tmappr/lib/flags"
@@ -28,6 +29,8 @@ func main() {
 
 	err = engine.RunEngine(config, &data)
 	handle(err)
+
+	arranger.Arrange(config, &data)
 
 	drawn := drawer.DrawMap(config, &data)
 

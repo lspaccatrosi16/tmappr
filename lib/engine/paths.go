@@ -27,7 +27,7 @@ func GetLinePath(config *types.AppConfig, line *types.Line, grid *cartesian.Coor
 	approxCoordinate := approxCoordinateMake(float64(config.Simres))
 
 	for _, s := range line.Stops {
-		coord := approxCoordinate(s.Coordinates[0], s.Coordinates[1])
+		coord := approxCoordinate(s.ExtCoordinates[0], s.ExtCoordinates[1])
 		coordinates = append(coordinates, coord)
 	}
 

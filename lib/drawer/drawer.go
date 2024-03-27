@@ -72,13 +72,15 @@ func DrawMap(config *types.AppConfig, data *types.AppData) *bytes.Buffer {
 		var styleText string
 
 		logger.Debug(fmt.Sprintf("Drawing Stop %s %s", stop.Name, c))
-		lineSegment := data.Pathings.FindPrimarySegmentWithPoint(c)
-		if lineSegment == nil {
+		lineSegments := data.Pathings.FindSegmentsWithPoint(c)
+		if len(lineSegments) == 0 {
 			logger.Log(fmt.Sprintf("WARN: could not find line segment for stop %s", stop.Name))
 			continue
 		}
 
-		segmentWidth := config.Linewidth * len(lineSegment.Lines)
+		psegment := lineSegments[len(lineSegments)-1]
+
+		pSegmentWidth := config.Linewidth * len(psegment.Lines)
 
 		if stop.Type == types.AutoStopType {
 			if len(data.StopLineMap[stop]) > 1 {
@@ -91,9 +93,32 @@ func DrawMap(config *types.AppConfig, data *types.AppData) *bytes.Buffer {
 		switch stop.Type {
 		case types.Interchange:
 			var xs, ys int
-			if len(lineSegment.Lines) > 1 {
-				xs = segmentWidth
-				ys = segmentWidth
+			if len(psegment.Lines) > 1 {
+				var perpLines int
+				for i := 0; i < len(lineSegments)-1; i++ {
+					if psegment.Gradient.NumberAcw(lineSegments[i].Gradient) <= 2 || psegment.Gradient.NumberCw(lineSegments[i].Gradient) <= 2 {
+						if len(lineSegments[i].Lines) > perpLines {
+							perpLines = len(lineSegments[i].Lines)
+						}
+					}
+				}
+				sSegmentWidth := 3 * halfWidth
+				if perpLines >= 2 {
+					sSegmentWidth = config.Linewidth * perpLines
+				}
+
+				switch psegment.Gradient {
+				case cartesian.North, cartesian.South:
+					xs = pSegmentWidth
+					ys = sSegmentWidth
+				case cartesian.East, cartesian.West:
+					xs = sSegmentWidth
+					ys = pSegmentWidth
+				default:
+					xs = pSegmentWidth
+					ys = pSegmentWidth
+				}
+
 			} else {
 				xs = 3 * halfWidth
 				ys = 3 * halfWidth
@@ -103,10 +128,10 @@ func DrawMap(config *types.AppConfig, data *types.AppData) *bytes.Buffer {
 		case types.Normal:
 			for i := 0; i < len(stop.Lines); i++ {
 				sl := data.LinesNames[stop.Lines[i]]
-				for j, l := range lineSegment.Lines {
+				for j, l := range psegment.Lines {
 					if l.Code == sl.Code {
-						xo := lineSegment.XOffsets[j]
-						yo := lineSegment.YOffsets[j]
+						xo := psegment.XOffsets[j]
+						yo := psegment.YOffsets[j]
 						canvas.Circle(xc(c[0])+xo, yc(c[1])+yo, threeeigthWidth, "fill: #ffffff")
 						break
 					}
@@ -122,7 +147,7 @@ func DrawMap(config *types.AppConfig, data *types.AppData) *bytes.Buffer {
 			textPlaced = true
 		} else {
 			for _, ca := range cartesian.CardinalPositions() {
-				if checkAdjacent(data.UsedGrid, c, ca, lineSegment) {
+				if checkAdjacent(data.UsedGrid, c, ca, psegment) {
 					textPlaced = true
 					selected = ca
 					break
@@ -145,15 +170,15 @@ func DrawMap(config *types.AppConfig, data *types.AppData) *bytes.Buffer {
 			sy := selected.Coordinates()[1]
 
 			if sx > 0 {
-				x += segmentWidth/2 + halfWidth
+				x += pSegmentWidth/2 + halfWidth
 			} else if sx < 0 {
-				x -= segmentWidth/2 + halfWidth
+				x -= pSegmentWidth/2 + halfWidth
 			}
 
 			if sy > 0 {
-				y += segmentWidth/2 + halfWidth
+				y += pSegmentWidth/2 + halfWidth
 			} else if sy < 0 {
-				y -= segmentWidth/2 + halfWidth
+				y -= pSegmentWidth/2 + halfWidth
 			}
 
 			for i, word := range words {

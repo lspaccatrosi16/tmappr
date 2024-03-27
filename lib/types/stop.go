@@ -11,12 +11,13 @@ import (
 )
 
 type Stop struct {
-	Name        string
-	Coordinates [2]float64
-	Id          int
-	Lines       []string
-	Type        StopType
-	Position    cartesian.Direction
+	Name           string
+	ExtCoordinates [2]float64
+	IntCoordinates cartesian.Coordinate
+	Id             int
+	Lines          []string
+	Type           StopType
+	Position       cartesian.Direction
 }
 
 func parseCoordinates(i, name string) ([2]int, error) {
@@ -86,9 +87,9 @@ func ParseStop(raw string) (*Stop, error) {
 	}
 
 	return &Stop{
-		Name:        components[0][1 : len(components[0])-1],
-		Coordinates: [2]float64{float64(coordinates[0]), float64(coordinates[1])},
-		Type:        stopType,
-		Position:    stopPosition,
+		Name:           components[0][1 : len(components[0])-1],
+		ExtCoordinates: [2]float64{float64(coordinates[0]), float64(coordinates[1])},
+		Type:           stopType,
+		Position:       stopPosition,
 	}, nil
 }

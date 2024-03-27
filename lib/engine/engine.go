@@ -23,9 +23,10 @@ func RunEngine(config *types.AppConfig, data *types.AppData) error {
 	cStopMap := map[cartesian.Coordinate]*types.Stop{}
 
 	for _, s := range data.Stops {
-		coord := approxCoordinate(s.Coordinates[0], s.Coordinates[1])
+		coord := approxCoordinate(s.ExtCoordinates[0], s.ExtCoordinates[1])
 		grid.Add(coord, s.Id)
 		cStopMap[coord] = s
+		s.IntCoordinates = coord
 	}
 
 	maxX, maxY := grid.MaxBounds()

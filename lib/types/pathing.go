@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"math"
+	"sort"
 	"strings"
 
 	"github.com/lspaccatrosi16/go-libs/structures/cartesian"
@@ -97,19 +98,38 @@ func (p *PathedSystem) RemoveSegment(seg *CompoundSegment) {
 	}
 }
 
-func (p *PathedSystem) FindPrimarySegmentWithPoint(c cartesian.Coordinate) *CompoundSegment {
-	var chosen *CompoundSegment
-	maxLines := 0
+type csList []*CompoundSegment
+
+func (c csList) Len() int           { return len(c) }
+func (c csList) Swap(i, j int)      { c[i], c[j] = c[j], c[i] }
+func (c csList) Less(i, j int) bool { return len(c[i].Lines) < len(c[j].Lines) }
+
+func (p *PathedSystem) FindSegmentsWithPoint(c cartesian.Coordinate) []*CompoundSegment {
+	found := csList{}
+
 	for _, seg := range p.Segments {
 		if seg.PointInLine(c) {
-			if len(seg.Lines) > maxLines {
-				chosen = seg
-				maxLines = len(seg.Lines)
-			}
+			found = append(found, seg)
 		}
 	}
 
-	return chosen
+	sort.Sort(found)
+
+	return found
+}
+
+func (p *PathedSystem) FindSegmentWithPointLine(c cartesian.Coordinate, l *Line) []*CompoundSegment {
+	found := []*CompoundSegment{}
+	for _, seg := range p.Segments {
+		if seg.PointInLine(c) {
+			for _, line := range seg.Lines {
+				if line == l {
+					found = append(found, seg)
+				}
+			}
+		}
+	}
+	return found
 }
 
 func (p *PathedSystem) AddSegment(c ...*CompoundSegment) {

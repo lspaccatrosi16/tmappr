@@ -3,6 +3,10 @@
 <svg width="600" height="600"
      xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink">
+<polyline points="306,522 90,306" style="stroke: #ff0000; stroke-width: 6px" />
+<circle cx="90" cy="306" r="3" style="fill: #ff0000" />
+<polyline points="90,90 522,90" style="stroke: #0000ff; stroke-width: 6px" />
+<circle cx="522" cy="90" r="3" style="fill: #0000ff" />
 <polyline points="522,90 414,198" style="stroke: #aa0080; stroke-width: 6px" />
 <circle cx="414" cy="198" r="3" style="fill: #aa0080" />
 <polyline points="414,198 414,414" style="stroke: #aa0080; stroke-width: 6px" />
@@ -13,40 +17,31 @@
 <circle cx="414" cy="198" r="3" style="fill: #107000" />
 <polyline points="414,198 90,198" style="stroke: #107000; stroke-width: 6px" />
 <circle cx="90" cy="198" r="3" style="fill: #107000" />
-<polyline points="306,522 90,306" style="stroke: #ff0000; stroke-width: 6px" />
-<circle cx="90" cy="306" r="3" style="fill: #ff0000" />
-<polyline points="90,90 522,90" style="stroke: #0000ff; stroke-width: 6px" />
-<circle cx="522" cy="90" r="3" style="fill: #0000ff" />
 <polyline points="90,306 90,198" style="stroke: #ff0000; stroke-width: 6px" />
 <circle cx="90" cy="198" r="3" style="fill: #ff0000" />
 <polyline points="87,198 87,90" style="stroke: #ff0000; stroke-width: 6px" />
 <circle cx="87" cy="90" r="3" style="fill: #ff0000" />
 <polyline points="93,198 93,90" style="stroke: #107000; stroke-width: 6px" />
 <circle cx="93" cy="90" r="3" style="fill: #107000" />
-<polyline points="306,522 90,522" style="stroke: #aa0080; stroke-width: 6px" />
-<circle cx="90" cy="522" r="3" style="fill: #aa0080" />
-<polyline points="522,522 306,522" style="stroke: #ff0000; stroke-width: 6px" />
-<circle cx="306" cy="522" r="3" style="fill: #ff0000" />
-<polyline points="519,90 519,306" style="stroke: #0000ff; stroke-width: 6px" />
-<circle cx="519" cy="306" r="3" style="fill: #0000ff" />
-<polyline points="525,90 525,306" style="stroke: #ff0000; stroke-width: 6px" />
-<circle cx="525" cy="306" r="3" style="fill: #ff0000" />
+<polyline points="519,90 519,306" style="stroke: #ff0000; stroke-width: 6px" />
+<circle cx="519" cy="306" r="3" style="fill: #ff0000" />
+<polyline points="525,90 525,306" style="stroke: #0000ff; stroke-width: 6px" />
+<circle cx="525" cy="306" r="3" style="fill: #0000ff" />
 <polyline points="516,306 516,522" style="stroke: #ff0000; stroke-width: 6px" />
 <circle cx="516" cy="522" r="3" style="fill: #ff0000" />
-<polyline points="522,306 522,522" style="stroke: #107000; stroke-width: 6px" />
-<circle cx="522" cy="522" r="3" style="fill: #107000" />
-<polyline points="528,306 528,522" style="stroke: #0000ff; stroke-width: 6px" />
-<circle cx="528" cy="522" r="3" style="fill: #0000ff" />
-<circle cx="528" cy="306" r="2" style="fill: #ffffff" />
-<circle cx="522" cy="306" r="2" style="fill: #ffffff" />
-<text x="561" y="302" style="font-size: 9px; text-anchor: middle;" >Litchfield</text>
-<text x="561" y="316" style="font-size: 9px; text-anchor: middle;" >Trent</text>
-<text x="561" y="330" style="font-size: 9px; text-anchor: middle;" >Valley</text>
-<rect x="86" y="518" width="9" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
-<text x="90" y="492" style="font-size: 9px; text-anchor: middle;" >York</text>
-<circle cx="519" cy="198" r="2" style="fill: #ffffff" />
+<polyline points="522,306 522,522" style="stroke: #0000ff; stroke-width: 6px" />
+<circle cx="522" cy="522" r="3" style="fill: #0000ff" />
+<polyline points="528,306 528,522" style="stroke: #107000; stroke-width: 6px" />
+<circle cx="528" cy="522" r="3" style="fill: #107000" />
+<polyline points="522,522 306,522" style="stroke: #ff0000; stroke-width: 6px" />
+<circle cx="306" cy="522" r="3" style="fill: #ff0000" />
+<polyline points="306,522 90,522" style="stroke: #aa0080; stroke-width: 6px" />
+<circle cx="90" cy="522" r="3" style="fill: #aa0080" />
+<circle cx="414" cy="414" r="2" style="fill: #ffffff" />
+<text x="447" y="417" style="font-size: 9px; text-anchor: middle;" >Rugby</text>
+<circle cx="525" cy="198" r="2" style="fill: #ffffff" />
 <text x="558" y="201" style="font-size: 9px; text-anchor: middle;" >Nuneaton</text>
-<rect x="84" y="84" width="12" height="12" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<rect x="84" y="86" width="12" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
 <text x="54" y="86" style="font-size: 9px; text-anchor: middle;" >Kensal</text>
 <text x="54" y="100" style="font-size: 9px; text-anchor: middle;" >Rise</text>
 <circle cx="414" cy="522" r="2" style="fill: #ffffff" />
@@ -55,18 +50,23 @@
 <rect x="302" y="518" width="9" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
 <text x="306" y="551" style="font-size: 9px; text-anchor: middle;" >Peckham</text>
 <text x="306" y="565" style="font-size: 9px; text-anchor: middle;" >Rye</text>
-<rect x="516" y="84" width="12" height="12" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
-<text x="558" y="93" style="font-size: 9px; text-anchor: middle;" >Stratford</text>
-<rect x="410" y="194" width="9" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
-<text x="381" y="168" style="font-size: 9px; text-anchor: middle;" >Stoke</text>
-<rect x="84" y="192" width="12" height="12" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
-<text x="54" y="194" style="font-size: 9px; text-anchor: middle;" >Denmark</text>
-<text x="54" y="208" style="font-size: 9px; text-anchor: middle;" >Hill</text>
-<rect x="513" y="513" width="18" height="18" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<rect x="513" y="518" width="18" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
 <text x="561" y="525" style="font-size: 9px; text-anchor: middle;" >Richmond</text>
+<rect x="516" y="86" width="12" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<text x="558" y="93" style="font-size: 9px; text-anchor: middle;" >Stratford</text>
 <circle cx="90" cy="306" r="2" style="fill: #ffffff" />
 <text x="57" y="302" style="font-size: 9px; text-anchor: middle;" >Hadley</text>
 <text x="57" y="316" style="font-size: 9px; text-anchor: middle;" >Wood</text>
-<circle cx="414" cy="414" r="2" style="fill: #ffffff" />
-<text x="447" y="417" style="font-size: 9px; text-anchor: middle;" >Rugby</text>
+<rect x="410" y="194" width="9" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<text x="381" y="168" style="font-size: 9px; text-anchor: middle;" >Stoke</text>
+<rect x="84" y="194" width="12" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<text x="54" y="194" style="font-size: 9px; text-anchor: middle;" >Denmark</text>
+<text x="54" y="208" style="font-size: 9px; text-anchor: middle;" >Hill</text>
+<circle cx="522" cy="306" r="2" style="fill: #ffffff" />
+<circle cx="528" cy="306" r="2" style="fill: #ffffff" />
+<text x="561" y="302" style="font-size: 9px; text-anchor: middle;" >Litchfield</text>
+<text x="561" y="316" style="font-size: 9px; text-anchor: middle;" >Trent</text>
+<text x="561" y="330" style="font-size: 9px; text-anchor: middle;" >Valley</text>
+<rect x="86" y="518" width="9" height="9" rx="3" ry="3" style="fill: #ffffff; stroke: #000000; stroke-width: 3px" />
+<text x="90" y="492" style="font-size: 9px; text-anchor: middle;" >York</text>
 </svg>
