@@ -40,16 +40,13 @@ func (c *CompoundSegment) Subsegment(start, end cartesian.Coordinate, newLines .
 				break
 			}
 		}
-		newSegments = append(newSegments, &CompoundSegment{
-			Lines:       c.Lines,
-			LineSegment: NewLineSegment(c.Start, newEnd, c.Gradient),
-		})
+		l := NewLineSegment(c.Start, newEnd, c.Gradient)
+		newSegments = append(newSegments, NewCompoundSegment(&l, c.Lines...))
 	}
 
-	newSegments = append(newSegments, &CompoundSegment{
-		Lines:       append(c.Lines, newLines...),
-		LineSegment: NewLineSegment(start, end, c.Gradient),
-	})
+	l := NewLineSegment(start, end, c.Gradient)
+
+	newSegments = append(newSegments, NewCompoundSegment(&l, append(c.Lines, newLines...)...))
 
 	if c.End != end {
 		newStart := c.End
@@ -59,13 +56,25 @@ func (c *CompoundSegment) Subsegment(start, end cartesian.Coordinate, newLines .
 				break
 			}
 		}
-		newSegments = append(newSegments, &CompoundSegment{
-			Lines:       c.Lines,
-			LineSegment: NewLineSegment(newStart, c.End, c.Gradient),
-		})
+		l := NewLineSegment(newStart, c.End, c.Gradient)
+		newSegments = append(newSegments, NewCompoundSegment(&l, c.Lines...))
 	}
 
 	return newSegments
+}
+
+func (c *CompoundSegment) ReorderLines(order []int) {
+	newArr := make([]*Line, len(c.Lines))
+	newXO := make([]int, len(c.Lines))
+	newYO := make([]int, len(c.Lines))
+
+	for i, o := range order {
+		newArr[i] = c.Lines[o]
+		newXO[i] = c.XOffsets[o]
+		newYO[i] = c.YOffsets[o]
+	}
+
+	c.Lines = newArr
 }
 
 type PathedSystem struct {
@@ -145,6 +154,15 @@ func NewLineSegment(start, end cartesian.Coordinate, gradient cartesian.Directio
 		Start:    start,
 		End:      end,
 		Gradient: gradient,
+	}
+}
+
+func NewCompoundSegment(ls *LineSegment, lines ...*Line) *CompoundSegment {
+	return &CompoundSegment{
+		Lines:       lines,
+		LineSegment: *ls,
+		XOffsets:    make([]int, len(lines)),
+		YOffsets:    make([]int, len(lines)),
 	}
 }
 

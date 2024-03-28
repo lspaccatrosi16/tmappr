@@ -130,76 +130,43 @@ func joinSegments(i1 *types.CompoundSegment, i2 types.LineSegment, lines []*type
 		return produced
 	} else if i2.PointInLine(i1.Start) && i2.PointInLine(i1.End) {
 		// existing segment is entirely within segment
-		invSeg := types.CompoundSegment{
-			Lines:       lines,
-			LineSegment: i2,
-		}
+		invSeg := types.NewCompoundSegment(&i2, lines...)
 		produced := invSeg.Subsegment(i1.Start, i1.End, i1.Lines...)
 		return produced
 	} else {
 		// segment and existing segment overlap
 		if i1.Start == i2.End || i1.End == i2.Start {
 			// segment and existing segment are adjacent
-			s := types.CompoundSegment{
-				LineSegment: i2,
-				Lines:       lines,
-			}
-			return []*types.CompoundSegment{i1, &s}
+			s := types.NewCompoundSegment(&i2, lines...)
+			return []*types.CompoundSegment{i1, s}
 		} else if i1.PointInLine(i2.Start) {
 			// segment starts within existing segment
 			// so end is beyond existing segment
-			s1 := types.CompoundSegment{
-				LineSegment: types.LineSegment{
-					Start: i1.Start,
-					End:   i2.Start,
-				},
-				Lines: i1.Lines,
-			}
+			l1 := types.NewLineSegment(i1.Start, i2.Start, i2.Gradient)
+			s1 := types.NewCompoundSegment(&l1, i1.Lines...)
 
-			s2 := types.CompoundSegment{
-				LineSegment: types.LineSegment{
-					Start: i2.Start,
-					End:   s1.End,
-				},
-				Lines: append(s1.Lines, lines...),
-			}
-			s3 := types.CompoundSegment{
-				LineSegment: types.LineSegment{
-					Start: s1.End,
-					End:   i2.End,
-				},
-				Lines: lines,
-			}
+			l2 := types.NewLineSegment(i2.Start, s1.End, i1.Gradient)
+			s2 := types.NewCompoundSegment(&l2, append(i1.Lines, lines...)...)
 
-			return []*types.CompoundSegment{&s1, &s2, &s3}
+			l3 := types.NewLineSegment(s1.End, i2.End, i2.Gradient)
+			s3 := types.NewCompoundSegment(&l3, lines...)
+
+			return []*types.CompoundSegment{s1, s2, s3}
 
 		} else if i1.PointInLine(i2.End) {
 			// segment ends within existing segment
 			// so start is before existing segment
 
-			s1 := types.CompoundSegment{
-				LineSegment: types.LineSegment{
-					Start: i2.Start,
-					End:   i1.Start,
-				},
-				Lines: lines,
-			}
+			l1 := types.NewLineSegment(i2.Start, i1.Start, i2.Gradient)
+			s1 := types.NewCompoundSegment(&l1, i1.Lines...)
 
-			s2 := types.CompoundSegment{
-				LineSegment: types.LineSegment{
-					Start: s1.Start,
-					End:   i2.End,
-				},
-				Lines: append(s1.Lines, lines...),
-			}
-			s3 := types.CompoundSegment{
-				LineSegment: types.LineSegment{
-					Start: i2.End,
-					End:   s1.End,
-				},
-				Lines: s1.Lines,
-			}
-			return []*types.CompoundSegment{&s1, &s2, &s3}
+			l2 := types.NewLineSegment(s1.Start, i2.End, i1.Gradient)
+			s2 := types.NewCompoundSegment(&l2, append(i1.Lines, lines...)...)
+
+			l3 := types.NewLineSegment(i2.End, s1.End, i2.Gradient)
+			s3 := types.NewCompoundSegment(&l3, lines...)
+
+			return []*types.CompoundSegment{s1, s2, s3}
 		} else {
 			panic("segments overlap but not in a way I can handle")
 		}
@@ -220,11 +187,8 @@ func includeSegment(system *types.PathedSystem, line *types.Line, segment types.
 	}
 
 	if existingSegment == nil {
-		newSeg := types.CompoundSegment{
-			Lines:       []*types.Line{line},
-			LineSegment: segment,
-		}
-		system.AddSegment(&newSeg)
+		newSeg := types.NewCompoundSegment(&segment, line)
+		system.AddSegment(newSeg)
 	} else {
 		produced := joinSegments(existingSegment, segment, []*types.Line{line})
 		system.AddSegment(produced...)

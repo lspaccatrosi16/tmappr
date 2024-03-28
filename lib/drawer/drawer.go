@@ -42,9 +42,6 @@ func DrawMap(config *types.AppConfig, data *types.AppData) *bytes.Buffer {
 			return config.Linewidth*n - (len(segment.Lines)-1)*halfWidth
 		}
 
-		segment.XOffsets = make([]int, len(segment.Lines))
-		segment.YOffsets = make([]int, len(segment.Lines))
-
 		var xo, yo int
 
 		for i, line := range segment.Lines {
